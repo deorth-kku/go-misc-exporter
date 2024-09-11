@@ -2,11 +2,8 @@ package smart
 
 import (
 	"github.com/anatol/smart.go"
-	"github.com/deorth-kku/go-misc-exporter/cmd"
 	"github.com/prometheus/client_golang/prometheus"
 )
-
-var _ cmd.Collector = new(collector)
 
 type PromDev interface {
 	Name() string

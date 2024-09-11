@@ -30,7 +30,7 @@ func NewCollector(conf Conf) (c *collector, err error) {
 	return
 }
 
-func (c *collector) Close() (err error) {
+func (c *collector) Close() error {
 	return nil
 }
 

@@ -7,7 +7,9 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/mxschmitt/golang-combinations v1.2.0
 	github.com/prometheus/client_golang v1.20.3
+	 github.com/robbiet480/go.nut v0.0.0-20240622015809-60e196249c53
 )
+
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

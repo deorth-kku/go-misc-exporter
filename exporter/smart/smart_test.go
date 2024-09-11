@@ -7,9 +7,12 @@ import (
 	"testing"
 
 	"github.com/anatol/smart.go"
+	"github.com/deorth-kku/go-misc-exporter/cmd"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+var _ cmd.Collector = new(collector)
 
 func TestCollector(t *testing.T) {
 	col, _ := NewCollector(Conf{})
