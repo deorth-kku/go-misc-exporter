@@ -1,7 +1,6 @@
 package nut
 
 import (
-	"fmt"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -17,23 +16,6 @@ var (
 	labels_template = []string{"server", "ups"}
 )
 
-func ExampleGetUPSList() {
-	client, connectErr := nut.Connect("127.0.0.1")
-	if connectErr != nil {
-		fmt.Print(connectErr)
-	}
-	_, authenticationError := client.Authenticate("admin", "mypass")
-	if authenticationError != nil {
-		fmt.Print(authenticationError)
-	}
-	upsList, listErr := client.GetUPSList()
-	if listErr != nil {
-		fmt.Print(listErr)
-	}
-	fmt.Print("First UPS", upsList[0])
-	client.Disconnect()
-}
-
 type collector struct {
 	clients     []nut.Client
 	server_info *prometheus.Desc
@@ -47,11 +29,7 @@ func NewCollector(conf Conf) (c *collector, err error) {
 	c.descs = make(map[string]*prometheus.Desc)
 	c.clients = make([]nut.Client, len(conf.Servers))
 	for i, server := range conf.Servers {
-		if server.Port == 0 {
-			c.clients[i], err = nut.Connect(server.Host)
-		} else {
-			c.clients[i], err = nut.Connect(server.Host, int(server.Port))
-		}
+		c.clients[i], err = Connect(server.Host, server.Port, common.FloatDuration(server.Timeout))
 		if err != nil {
 			return nil, err
 		}
