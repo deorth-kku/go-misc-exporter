@@ -2,12 +2,10 @@ package hwmon
 
 import (
 	"fmt"
-	"net/http"
 	"testing"
 
 	"github.com/deorth-kku/go-misc-exporter/cmd"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/deorth-kku/go-misc-exporter/common"
 )
 
 var _ cmd.Collector = new(collector)
@@ -22,7 +20,9 @@ func TestRapl(t *testing.T) {
 }
 
 func TestCollector(t *testing.T) {
-	col, _ := NewCollector(Conf{})
-	prometheus.MustRegister(col)
-	http.ListenAndServe(":8188", promhttp.Handler())
+	err := cmd.TestCollectorThenClose(common.Must(NewCollector(Conf{})))
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }

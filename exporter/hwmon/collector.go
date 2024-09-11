@@ -38,6 +38,7 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	c.cpu_energy_desc = prometheus.NewDesc(prefix+"cpu_energy", "cpu total energy use in uj", []string{"sensor"}, nil)
 	c.fan_speed_desc = prometheus.NewDesc(prefix+"fan_speed", "fan speed from libsensors", []string{"chip", "sensor"}, nil)
 	ch <- c.cpu_energy_desc
+	ch <- c.fan_speed_desc
 }
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {

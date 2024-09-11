@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"io"
 	"log/slog"
 	"syscall"
 
@@ -10,12 +9,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
-
-type Collector interface {
-	prometheus.Collector
-	io.Closer
-	Path() string
-}
 
 type Conf struct {
 	Listen string `json:"listen,omitempty"`
