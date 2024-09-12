@@ -47,9 +47,9 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 		slog.Error("failed to get rapl energy", "err", err)
 	} else {
 		for pkg, value := range rapl {
-			ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value.Package), fmt.Sprintf("Sockect-%d,package", pkg))
+			ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value.Package), fmt.Sprintf("Socket-%d,package", pkg))
 			for core, value := range value.PerCore {
-				ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), fmt.Sprintf("Sockect-%d,Core-%d", pkg, core))
+				ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), fmt.Sprintf("Socket-%d,Core-%d", pkg, core))
 			}
 		}
 	}
