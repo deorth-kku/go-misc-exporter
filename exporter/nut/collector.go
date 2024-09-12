@@ -109,7 +109,12 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 	for _, client := range c.clients {
 		serverstring := client.Hostname.String()
 		ch <- prometheus.MustNewConstMetric(c.server_info, prometheus.GaugeValue, 0, serverstring, client.Version, client.ProtocolVersion)
-		for _, ups := range common.Must(client.GetUPSList()) {
+		upslist, err := client.GetUPSList()
+		if err != nil {
+			slog.Error("failed to get ups list", "server", serverstring, "err", err)
+			return
+		}
+		for _, ups := range upslist {
 			info_map := make(map[string]string)
 			for _, v := range ups.Variables {
 				desc, ok := c.descs[v.Name]

@@ -2,6 +2,7 @@ package aria2
 
 import (
 	"context"
+	"log/slog"
 	"slices"
 
 	"github.com/deorth-kku/go-misc-exporter/common"
@@ -94,15 +95,26 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
 	for _, server := range c.servers {
-		for k, v := range IterStructJson(common.Must(server.GetGlobalStats())) {
-			vv, ok := v.(uint)
-			if !ok {
-				continue
+		gloabl_stat, err := server.GetGlobalStats()
+		if err != nil {
+			slog.Error("failed to get aria2 global stats", "server", server.Rpc, "err", err)
+		} else {
+			for k, v := range IterStructJson(gloabl_stat) {
+				vv, ok := v.(uint)
+				if !ok {
+					continue
+				}
+				ch <- prometheus.MustNewConstMetric(c.global_desc[k], prometheus.GaugeValue, float64(vv), server.Rpc)
 			}
-			ch <- prometheus.MustNewConstMetric(c.global_desc[k], prometheus.GaugeValue, float64(vv), server.Rpc)
 		}
 
-		for _, task := range common.Must(server.TellActive([]string{}...)) {
+		tasks, err := server.TellActive([]string{}...)
+		if err != nil {
+			slog.Error("failed to get aria2 tasks status", "server", server.Rpc, "err", err)
+			return
+		}
+
+		for _, task := range tasks {
 			labels := append([]string{server.Rpc}, TaskLabels(task)...)
 			info_labels := slices.Clone(labels)
 			for k, v := range IterStructJson(task) {

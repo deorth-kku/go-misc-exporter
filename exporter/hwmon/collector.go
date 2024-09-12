@@ -1,9 +1,9 @@
 package hwmon
 
 import (
+	"log/slog"
 	"strconv"
 
-	"github.com/deorth-kku/go-misc-exporter/common"
 	"github.com/mt-inside/go-lmsensors"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -42,11 +42,20 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
-	rapl := common.Must(IntelRaplEnergy())
-	for sensor, value := range rapl {
-		ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), "rapl-"+strconv.Itoa(sensor))
+	rapl, err := IntelRaplEnergy()
+	if err != nil {
+		slog.Error("failed to get rapl energy", "err", err)
+	} else {
+		for sensor, value := range rapl {
+			ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), "rapl-"+strconv.Itoa(sensor))
+		}
 	}
-	sensors := common.Must(lmsensors.Get())
+
+	sensors, err := lmsensors.Get()
+	if err != nil {
+		slog.Error("failed to get lmsensors data", "err", err)
+		return
+	}
 	for _, chip := range sensors.Chips {
 		for _, reading := range chip.Sensors {
 			if reading.SensorType != lmsensors.Fan {
