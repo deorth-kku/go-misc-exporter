@@ -1,8 +1,8 @@
 package hwmon
 
 import (
+	"fmt"
 	"log/slog"
-	"strconv"
 
 	"github.com/mt-inside/go-lmsensors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -46,8 +46,11 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 	if err != nil {
 		slog.Error("failed to get rapl energy", "err", err)
 	} else {
-		for sensor, value := range rapl {
-			ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), "rapl-"+strconv.Itoa(sensor))
+		for pkg, value := range rapl {
+			ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value.Package), fmt.Sprintf("Sockect-%d,package", pkg))
+			for core, value := range value.PerCore {
+				ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), fmt.Sprintf("Sockect-%d,Core-%d", pkg, core))
+			}
 		}
 	}
 
