@@ -1,0 +1,485 @@
+Accept: bool
+AccessSELinuxContext: string
+AccuracyUSec: uint64
+ActivationDetails: [][]interface {}
+ActiveEnterTimestamp: uint64
+ActiveEnterTimestampMonotonic: uint64
+ActiveExitTimestamp: uint64
+ActiveExitTimestampMonotonic: uint64
+ActiveState: string
+After: []string
+AllowIsolate: bool
+AllowedCPUs: []uint8
+AllowedMemoryNodes: []uint8
+AmbientCapabilities: uint64
+AppArmorProfile: []interface {}
+AssertResult: bool
+AssertTimestamp: uint64
+AssertTimestampMonotonic: uint64
+Asserts: [][]interface {}
+BPFProgram: [][]interface {}
+Backlog: uint32
+Before: []string
+BindIPv6Only: string
+BindPaths: [][]interface {}
+BindReadOnlyPaths: [][]interface {}
+BindToDevice: string
+BindsTo: []string
+BlockIOAccounting: bool
+BlockIODeviceWeight: [][]interface {}
+BlockIOReadBandwidth: [][]interface {}
+BlockIOWeight: uint64
+BlockIOWriteBandwidth: [][]interface {}
+BoundBy: []string
+Broadcast: bool
+BusName: string
+CPUAccounting: bool
+CPUAffinity: []uint8
+CPUAffinityFromNUMA: bool
+CPUQuotaPerSecUSec: uint64
+CPUQuotaPeriodUSec: uint64
+CPUSchedulingPolicy: int32
+CPUSchedulingPriority: int32
+CPUSchedulingResetOnFork: bool
+CPUShares: uint64
+CPUUsageNSec: uint64
+CPUWeight: uint64
+CacheDirectory: []string
+CacheDirectoryMode: uint32
+CacheDirectorySymlink: [][]interface {}
+CanClean: []string
+CanFreeze: bool
+CanIsolate: bool
+CanReload: bool
+CanStart: bool
+CanStop: bool
+CapabilityBoundingSet: uint64
+CleanResult: string
+CollectMode: string
+ConditionResult: bool
+ConditionTimestamp: uint64
+ConditionTimestampMonotonic: uint64
+Conditions: [][]interface {}
+ConfigurationDirectory: []string
+ConfigurationDirectoryMode: uint32
+ConflictedBy: []string
+Conflicts: []string
+ConsistsOf: []string
+ControlGroup: string
+ControlGroupId: uint64
+ControlPID: uint32
+Controller: string
+CoredumpFilter: uint64
+DefaultDependencies: bool
+DefaultMemoryLow: uint64
+DefaultMemoryMin: uint64
+DeferAcceptUSec: uint64
+Delegate: bool
+DelegateControllers: []string
+Description: string
+DeviceAllow: [][]interface {}
+DevicePolicy: string
+DirectoryMode: uint32
+DisableControllers: []string
+Documentation: []string
+DropInPaths: []string
+DynamicUser: bool
+EffectiveCPUs: []uint8
+EffectiveMemoryNodes: []uint8
+Environment: []string
+EnvironmentFiles: [][]interface {}
+ExecActivate: [][]interface {}
+ExecCondition: [][]interface {}
+ExecConditionEx: [][]interface {}
+ExecDeactivate: [][]interface {}
+ExecMainCode: int32
+ExecMainExitTimestamp: uint64
+ExecMainExitTimestampMonotonic: uint64
+ExecMainPID: uint32
+ExecMainStartTimestamp: uint64
+ExecMainStartTimestampMonotonic: uint64
+ExecMainStatus: int32
+ExecMount: [][]interface {}
+ExecPaths: []string
+ExecReload: [][]interface {}
+ExecReloadEx: [][]interface {}
+ExecRemount: [][]interface {}
+ExecSearchPath: []string
+ExecStart: [][]interface {}
+ExecStartEx: [][]interface {}
+ExecStartPost: [][]interface {}
+ExecStartPostEx: [][]interface {}
+ExecStartPre: [][]interface {}
+ExecStartPreEx: [][]interface {}
+ExecStop: [][]interface {}
+ExecStopEx: [][]interface {}
+ExecStopPost: [][]interface {}
+ExecStopPostEx: [][]interface {}
+ExecStopPre: [][]interface {}
+ExecUnmount: [][]interface {}
+ExitType: string
+ExtensionDirectories: []string
+ExtensionImages: [][]interface {}
+ExtraOptions: string
+FailureAction: string
+FailureActionExitStatus: int32
+FileDescriptorName: string
+FileDescriptorStoreMax: uint32
+FinalKillSignal: int32
+FixedRandomDelay: bool
+FlushPending: bool
+Following: string
+ForceUnmount: bool
+FragmentPath: string
+FreeBind: bool
+FreezerState: string
+GID: uint32
+Group: string
+GuessMainPID: bool
+IOAccounting: bool
+IODeviceLatencyTargetUSec: [][]interface {}
+IODeviceWeight: [][]interface {}
+IOReadBandwidthMax: [][]interface {}
+IOReadBytes: uint64
+IOReadIOPSMax: [][]interface {}
+IOReadOperations: uint64
+IOSchedulingClass: int32
+IOSchedulingPriority: int32
+IOWeight: uint64
+IOWriteBandwidthMax: [][]interface {}
+IOWriteBytes: uint64
+IOWriteIOPSMax: [][]interface {}
+IOWriteOperations: uint64
+IPAccounting: bool
+IPAddressAllow: [][]interface {}
+IPAddressDeny: [][]interface {}
+IPCNamespacePath: string
+IPEgressBytes: uint64
+IPEgressFilterPath: []string
+IPEgressPackets: uint64
+IPIngressBytes: uint64
+IPIngressFilterPath: []string
+IPIngressPackets: uint64
+IPTOS: int32
+IPTTL: int32
+Id: string
+IgnoreOnIsolate: bool
+IgnoreSIGPIPE: bool
+InaccessiblePaths: []string
+InactiveEnterTimestamp: uint64
+InactiveEnterTimestampMonotonic: uint64
+InactiveExitTimestamp: uint64
+InactiveExitTimestampMonotonic: uint64
+InvocationID: []uint8
+Job: []interface {}
+JobRunningTimeoutUSec: uint64
+JobTimeoutAction: string
+JobTimeoutRebootArgument: string
+JobTimeoutUSec: uint64
+JoinsNamespaceOf: []string
+KeepAlive: bool
+KeepAliveIntervalUSec: uint64
+KeepAliveProbes: uint32
+KeepAliveTimeUSec: uint64
+KeyringMode: string
+KillMode: string
+KillSignal: int32
+LastTriggerUSec: uint64
+LastTriggerUSecMonotonic: uint64
+LazyUnmount: bool
+LimitAS: uint64
+LimitASSoft: uint64
+LimitCORE: uint64
+LimitCORESoft: uint64
+LimitCPU: uint64
+LimitCPUSoft: uint64
+LimitDATA: uint64
+LimitDATASoft: uint64
+LimitFSIZE: uint64
+LimitFSIZESoft: uint64
+LimitLOCKS: uint64
+LimitLOCKSSoft: uint64
+LimitMEMLOCK: uint64
+LimitMEMLOCKSoft: uint64
+LimitMSGQUEUE: uint64
+LimitMSGQUEUESoft: uint64
+LimitNICE: uint64
+LimitNICESoft: uint64
+LimitNOFILE: uint64
+LimitNOFILESoft: uint64
+LimitNPROC: uint64
+LimitNPROCSoft: uint64
+LimitRSS: uint64
+LimitRSSSoft: uint64
+LimitRTPRIO: uint64
+LimitRTPRIOSoft: uint64
+LimitRTTIME: uint64
+LimitRTTIMESoft: uint64
+LimitSIGPENDING: uint64
+LimitSIGPENDINGSoft: uint64
+LimitSTACK: uint64
+LimitSTACKSoft: uint64
+Listen: [][]interface {}
+LoadCredential: [][]interface {}
+LoadCredentialEncrypted: [][]interface {}
+LoadError: []interface {}
+LoadState: string
+LockPersonality: bool
+LogExtraFields: [][]uint8
+LogLevelMax: int32
+LogNamespace: string
+LogRateLimitBurst: uint32
+LogRateLimitIntervalUSec: uint64
+LogsDirectory: []string
+LogsDirectoryMode: uint32
+LogsDirectorySymlink: [][]interface {}
+MainPID: uint32
+MakeDirectory: bool
+ManagedOOMMemoryPressure: string
+ManagedOOMMemoryPressureLimit: uint32
+ManagedOOMPreference: string
+ManagedOOMSwap: string
+Mark: int32
+Markers: []string
+MaxConnections: uint32
+MaxConnectionsPerSource: uint32
+MemoryAccounting: bool
+MemoryAvailable: uint64
+MemoryCurrent: uint64
+MemoryDenyWriteExecute: bool
+MemoryHigh: uint64
+MemoryLimit: uint64
+MemoryLow: uint64
+MemoryMax: uint64
+MemoryMin: uint64
+MemorySwapMax: uint64
+MessageQueueMaxMessages: int64
+MessageQueueMessageSize: int64
+MountAPIVFS: bool
+MountFlags: uint64
+MountImages: [][]interface {}
+NAccepted: uint32
+NConnections: uint32
+NFileDescriptorStore: uint32
+NRefused: uint32
+NRestarts: uint32
+NUMAMask: []uint8
+NUMAPolicy: int32
+Names: []string
+NeedDaemonReload: bool
+NetworkNamespacePath: string
+NextElapseUSecMonotonic: uint64
+NextElapseUSecRealtime: uint64
+Nice: int32
+NoDelay: bool
+NoExecPaths: []string
+NoNewPrivileges: bool
+NonBlocking: bool
+NotifyAccess: string
+OOMPolicy: string
+OOMScoreAdjust: int32
+OnClockChange: bool
+OnFailure: []string
+OnFailureJobMode: string
+OnFailureOf: []string
+OnSuccess: []string
+OnSuccessJobMode: string
+OnSuccessOf: []string
+OnTimezoneChange: bool
+Options: string
+PAMName: string
+PIDFile: string
+PartOf: []string
+PassCredentials: bool
+PassEnvironment: []string
+PassPacketInfo: bool
+PassSecurity: bool
+Paths: [][]interface {}
+Perpetual: bool
+Persistent: bool
+Personality: string
+PipeSize: uint64
+Priority: int32
+PrivateDevices: bool
+PrivateIPC: bool
+PrivateMounts: bool
+PrivateNetwork: bool
+PrivateTmp: bool
+PrivateUsers: bool
+ProcSubset: string
+PropagatesReloadTo: []string
+PropagatesStopTo: []string
+ProtectClock: bool
+ProtectControlGroups: bool
+ProtectHome: string
+ProtectHostname: bool
+ProtectKernelLogs: bool
+ProtectKernelModules: bool
+ProtectKernelTunables: bool
+ProtectProc: string
+ProtectSystem: string
+RandomizedDelayUSec: uint64
+ReadOnlyPaths: []string
+ReadWriteOnly: bool
+ReadWritePaths: []string
+RebootArgument: string
+ReceiveBuffer: uint64
+Refs: []string
+RefuseManualStart: bool
+RefuseManualStop: bool
+ReloadPropagatedFrom: []string
+ReloadResult: string
+RemainAfterElapse: bool
+RemainAfterExit: bool
+RemoveIPC: bool
+RemoveOnStop: bool
+RequiredBy: []string
+Requires: []string
+RequiresMountsFor: []string
+Requisite: []string
+RequisiteOf: []string
+Restart: string
+RestartForceExitStatus: []interface {}
+RestartKillSignal: int32
+RestartPreventExitStatus: []interface {}
+RestartUSec: uint64
+RestrictAddressFamilies: []interface {}
+RestrictFileSystems: []interface {}
+RestrictNamespaces: uint64
+RestrictNetworkInterfaces: []interface {}
+RestrictRealtime: bool
+RestrictSUIDSGID: bool
+Result: string
+ReusePort: bool
+RootDirectory: string
+RootDirectoryStartOnly: bool
+RootHash: []uint8
+RootHashPath: string
+RootHashSignature: []uint8
+RootHashSignaturePath: string
+RootImage: string
+RootImageOptions: [][]interface {}
+RootVerity: string
+RuntimeDirectory: []string
+RuntimeDirectoryMode: uint32
+RuntimeDirectoryPreserve: string
+RuntimeDirectorySymlink: [][]interface {}
+RuntimeMaxUSec: uint64
+RuntimeRandomizedExtraUSec: uint64
+SELinuxContext: []interface {}
+SameProcessGroup: bool
+SecureBits: int32
+SendBuffer: uint64
+SendSIGHUP: bool
+SendSIGKILL: bool
+SetCredential: [][]interface {}
+SetCredentialEncrypted: [][]interface {}
+Slice: string
+SliceOf: []string
+SloppyOptions: bool
+SmackLabel: string
+SmackLabelIPIn: string
+SmackLabelIPOut: string
+SmackProcessLabel: []interface {}
+SocketBindAllow: [][]interface {}
+SocketBindDeny: [][]interface {}
+SocketGroup: string
+SocketMode: uint32
+SocketProtocol: int32
+SocketUser: string
+SourcePath: string
+StandardError: string
+StandardErrorFileDescriptorName: string
+StandardInput: string
+StandardInputData: []uint8
+StandardInputFileDescriptorName: string
+StandardOutput: string
+StandardOutputFileDescriptorName: string
+StartLimitAction: string
+StartLimitBurst: uint32
+StartLimitIntervalUSec: uint64
+StartupAllowedCPUs: []uint8
+StartupAllowedMemoryNodes: []uint8
+StartupBlockIOWeight: uint64
+StartupCPUShares: uint64
+StartupCPUWeight: uint64
+StartupIOWeight: uint64
+StateChangeTimestamp: uint64
+StateChangeTimestampMonotonic: uint64
+StateDirectory: []string
+StateDirectoryMode: uint32
+StateDirectorySymlink: [][]interface {}
+StatusErrno: int32
+StatusText: string
+StopPropagatedFrom: []string
+StopWhenUnneeded: bool
+SubState: string
+SuccessAction: string
+SuccessActionExitStatus: int32
+SuccessExitStatus: []interface {}
+SupplementaryGroups: []string
+Symlinks: []string
+SysFSPath: string
+SyslogFacility: int32
+SyslogIdentifier: string
+SyslogLevel: int32
+SyslogLevelPrefix: bool
+SyslogPriority: int32
+SystemCallArchitectures: []string
+SystemCallErrorNumber: int32
+SystemCallFilter: []interface {}
+SystemCallLog: []interface {}
+TCPCongestion: string
+TTYColumns: uint16
+TTYPath: string
+TTYReset: bool
+TTYRows: uint16
+TTYVHangup: bool
+TTYVTDisallocate: bool
+TasksAccounting: bool
+TasksCurrent: uint64
+TasksMax: uint64
+TemporaryFileSystem: [][]interface {}
+TimeoutAbortUSec: uint64
+TimeoutCleanUSec: uint64
+TimeoutIdleUSec: uint64
+TimeoutStartFailureMode: string
+TimeoutStartUSec: uint64
+TimeoutStopFailureMode: string
+TimeoutStopUSec: uint64
+TimeoutUSec: uint64
+TimerSlackNSec: uint64
+TimersCalendar: [][]interface {}
+TimersMonotonic: [][]interface {}
+Timestamping: string
+Transient: bool
+Transparent: bool
+TriggerLimitBurst: uint32
+TriggerLimitIntervalUSec: uint64
+TriggeredBy: []string
+Triggers: []string
+Type: string
+UID: uint32
+UMask: uint32
+USBFunctionDescriptors: string
+USBFunctionStrings: string
+Unit: string
+UnitFilePreset: string
+UnitFileState: string
+UnsetEnvironment: []string
+UpheldBy: []string
+Upholds: []string
+User: string
+UtmpIdentifier: string
+UtmpMode: string
+WakeSystem: bool
+WantedBy: []string
+Wants: []string
+WatchdogSignal: int32
+WatchdogTimestamp: uint64
+WatchdogTimestampMonotonic: uint64
+WatchdogUSec: uint64
+What: string
+Where: string
+WorkingDirectory: string
+Writable: bool

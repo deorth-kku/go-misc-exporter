@@ -1,7 +1,6 @@
 package aria2
 
 import (
-	"context"
 	"log/slog"
 	"slices"
 
@@ -41,7 +40,7 @@ func NewCollector(conf Conf) (col *collector, err error) {
 		if server.Timeout == 0 {
 			server.Timeout = 10
 		}
-		ctx, cancal := context.WithTimeout(context.Background(), common.FloatDuration(server.Timeout))
+		ctx, cancal := common.TimeoutContext(server.Timeout)
 		defer cancal()
 		col.servers[i].Client, err = arigo.DialContext(ctx, server.Rpc, server.Secret)
 		if err != nil {
