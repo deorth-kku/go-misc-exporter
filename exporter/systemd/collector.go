@@ -58,6 +58,10 @@ func NewCollector(conf Conf) (col *collector, err error) {
 		return
 	}
 	col.version, err = col.GetManagerProperty("Version")
+	if err != nil {
+		return
+	}
+	col.version = strings.Trim(col.version, "\"")
 	return
 }
 
