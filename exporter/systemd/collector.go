@@ -20,6 +20,10 @@ var default_exported_properties = []string{
 	"CPUUsageNSec",
 	"MemoryCurrent",
 	"TasksCurrent",
+	"IOReadBytes",
+	"IOWriteBytes",
+	"IPIngressBytes",
+	"IPEgressBytes",
 }
 
 const (
