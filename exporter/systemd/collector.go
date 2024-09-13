@@ -16,15 +16,24 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-var default_exported_properties = []string{
-	"CPUUsageNSec",
-	"MemoryCurrent",
-	"TasksCurrent",
-	"IOReadBytes",
-	"IOWriteBytes",
-	"IPIngressBytes",
-	"IPEgressBytes",
-}
+var (
+	default_exported_properties = []string{
+		"CPUUsageNSec",
+		"MemoryCurrent",
+		"TasksCurrent",
+		"IOReadBytes",
+		"IOWriteBytes",
+		"IPIngressBytes",
+		"IPEgressBytes",
+	}
+	counter_properties = []string{
+		"CPUUsageNSec",
+		"IOReadBytes",
+		"IOWriteBytes",
+		"IPIngressBytes",
+		"IPEgressBytes",
+	}
+)
 
 const (
 	head      = "systemd_"
@@ -157,7 +166,7 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 				continue
 			}
 			var tt prometheus.ValueType
-			if prop == "CPUUsageNSec" {
+			if slices.Contains(counter_properties, prop) {
 				tt = prometheus.CounterValue
 			} else {
 				tt = prometheus.GaugeValue
