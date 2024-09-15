@@ -17,14 +17,12 @@ import (
 )
 
 var (
-	default_exported_properties = []string{
-		"CPUUsageNSec",
-		"MemoryCurrent",
-		"TasksCurrent",
-		"IOReadBytes",
-		"IOWriteBytes",
-		"IPIngressBytes",
-		"IPEgressBytes",
+	default_accounting_properties = map[string][]string{
+		"DefaultCPUAccounting":    {"CPUUsageNSec"},
+		"DefaultMemoryAccounting": {"MemoryCurrent"},
+		"DefaultTasksAccounting":  {"TasksCurrent"},
+		"DefaultIOAccounting":     {"IOReadBytes", "IOWriteBytes"},
+		"DefaultIPAccounting":     {"IPIngressBytes", "IPEgressBytes"},
 	}
 	counter_properties = []string{
 		"CPUUsageNSec",
@@ -55,9 +53,6 @@ type collector struct {
 func NewCollector(conf Conf) (col *collector, err error) {
 	col = new(collector)
 	col.Conf = conf
-	if len(col.Properties) == 0 {
-		col.Properties = default_exported_properties
-	}
 	if col.Timeout == 0 {
 		col.Timeout = 10
 	}
@@ -70,11 +65,37 @@ func NewCollector(conf Conf) (col *collector, err error) {
 	if err != nil {
 		return
 	}
+	if len(col.Properties) == 0 {
+		col.Properties, err = col.default_properties()
+		if err != nil {
+			return
+		}
+	}
+
 	col.version, err = col.GetManagerProperty("Version")
 	if err != nil {
 		return
 	}
 	col.version = strings.Trim(col.version, "\"")
+	return
+}
+
+func (c *collector) default_properties() (props []string, err error) {
+	var temp string
+	for k, v := range default_accounting_properties {
+		temp, err = c.GetManagerProperty(k)
+		if err != nil {
+			if strings.HasPrefix(err.Error(), "Unknown interface") {
+				slog.Warn("cannot find Manager Property, consider upgrade your systemd. See https://github.com/systemd/systemd/issues/28045", "property", k, "err", err)
+				err = nil
+				continue
+			}
+			return nil, err
+		}
+		if temp == "true" {
+			props = append(props, v...)
+		}
+	}
 	return
 }
 
