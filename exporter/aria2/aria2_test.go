@@ -56,7 +56,7 @@ func TestIterStruct(t *testing.T) {
 func TestCollector(t *testing.T) {
 	startAria2()
 	col, err := NewCollector(Conf{
-		Servers: []Server{{
+		Servers: []ServerConf{{
 			Rpc:     wsrpc,
 			Secret:  secret,
 			Timeout: 10,
@@ -67,6 +67,19 @@ func TestCollector(t *testing.T) {
 		return
 	}
 	col.servers[0].AddURI([]string{"https://www.google.com"}, nil)
+	err = cmd.TestCollector(col)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	err = col.servers[0].Shutdown()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	time.Sleep(10 * time.Second)
+	startAria2()
+	time.Sleep(1 * time.Second)
 	err = cmd.TestCollectorThenClose(col)
 	if err != nil {
 		t.Error(err)

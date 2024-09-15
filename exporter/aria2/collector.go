@@ -1,8 +1,10 @@
 package aria2
 
 import (
+	"fmt"
 	"log/slog"
 	"slices"
+	"time"
 
 	"github.com/deorth-kku/go-misc-exporter/common"
 	"github.com/prometheus/client_golang/prometheus"
@@ -16,7 +18,7 @@ const (
 )
 
 type collector struct {
-	servers        []server
+	servers        []*server
 	path           string
 	global_desc    map[string]*prometheus.Desc
 	task_desc      map[string]*prometheus.Desc
@@ -25,7 +27,38 @@ type collector struct {
 
 type server struct {
 	*arigo.Client
-	Rpc string
+	ServerConf
+}
+
+func (s *server) connect() (err error) {
+	ctx, cancal := common.TimeoutContext(s.Timeout)
+	defer cancal()
+	if s.Client != nil {
+		s.Client.Close()
+	}
+	s.Client, err = arigo.DialContext(ctx, s.Rpc, s.Secret)
+	return err
+}
+
+const (
+	reconnect_times    = 3
+	reconnect_interval = 1 * time.Second
+)
+
+func (s *server) reconnect() {
+	var err error
+	bak := s.Client
+	slog.Warn("try to reconnect to aria2 rpc", "rpc", s.Rpc)
+	for i := range reconnect_times {
+		err = s.connect()
+		if err != nil {
+			slog.Warn("failed to reconnect aria2 rpc", "rpc", s.Rpc, "retry", fmt.Sprintf("%d/%d", i+1, reconnect_times), "err", err)
+			time.Sleep(reconnect_interval)
+		} else {
+			return
+		}
+	}
+	s.Client = bak
 }
 
 func NewCollector(conf Conf) (col *collector, err error) {
@@ -33,20 +66,20 @@ func NewCollector(conf Conf) (col *collector, err error) {
 		path:        conf.Path,
 		global_desc: make(map[string]*prometheus.Desc),
 		task_desc:   make(map[string]*prometheus.Desc),
-		servers:     make([]server, len(conf.Servers)),
+		servers:     make([]*server, len(conf.Servers)),
 	}
 
-	for i, server := range conf.Servers {
-		if server.Timeout == 0 {
-			server.Timeout = 10
+	for i, serverConf := range conf.Servers {
+		if serverConf.Timeout == 0 {
+			serverConf.Timeout = 10
 		}
-		ctx, cancal := common.TimeoutContext(server.Timeout)
-		defer cancal()
-		col.servers[i].Client, err = arigo.DialContext(ctx, server.Rpc, server.Secret)
+		col.servers[i] = &server{
+			ServerConf: serverConf,
+		}
+		err = col.servers[i].connect()
 		if err != nil {
 			return
 		}
-		col.servers[i].Rpc = server.Rpc
 	}
 	return
 }
@@ -97,6 +130,7 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 		gloabl_stat, err := server.GetGlobalStats()
 		if err != nil {
 			slog.Error("failed to get aria2 global stats", "server", server.Rpc, "err", err)
+			server.reconnect()
 		} else {
 			for k, v := range IterStructJson(gloabl_stat) {
 				vv, ok := v.(uint)
@@ -110,6 +144,7 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 		tasks, err := server.TellActive([]string{}...)
 		if err != nil {
 			slog.Error("failed to get aria2 tasks status", "server", server.Rpc, "err", err)
+			server.reconnect()
 			return
 		}
 

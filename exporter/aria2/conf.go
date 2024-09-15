@@ -1,11 +1,11 @@
 package aria2
 
 type Conf struct {
-	Path    string   `json:"path,omitempty"`
-	Servers []Server `json:"servers,omitempty"`
+	Path    string       `json:"path,omitempty"`
+	Servers []ServerConf `json:"servers,omitempty"`
 }
 
-type Server struct {
+type ServerConf struct {
 	Rpc     string  `json:"rpc,omitempty"`
 	Secret  string  `json:"secret,omitempty"`
 	Timeout float64 `json:"timeout,omitempty"`
