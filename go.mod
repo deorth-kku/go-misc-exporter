@@ -11,11 +11,9 @@ require (
 	github.com/prometheus/client_golang v1.20.3
 	github.com/prometheus/client_model v0.6.1
 	github.com/robbiet480/go.nut v0.0.0-20240622015809-60e196249c53
-	github.com/siku2/arigo v0.2.1-0.20221203162025-97cc8d79dcf4
+	github.com/siku2/arigo v0.2.1-0.20240914211156-9a35ad9afa69
 	github.com/stoewer/go-strcase v1.3.0
 )
-
-replace github.com/siku2/arigo v0.2.1-0.20221203162025-97cc8d79dcf4 => github.com/deorth-kku/arigo v0.0.0-20240912062354-027940cab548
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

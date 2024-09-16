@@ -53,6 +53,8 @@ github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0leargg
 github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
 github.com/robbiet480/go.nut v0.0.0-20240622015809-60e196249c53 h1:TaG8Gmz2WOhR5KKymFGy9nnECpEZ+z01J9F22aqjuF0=
 github.com/robbiet480/go.nut v0.0.0-20240622015809-60e196249c53/go.mod h1:pL1huxuIlWub46MsMVJg4p7OXkzbPp/APxh9IH0eJjQ=
+github.com/siku2/arigo v0.2.1-0.20240914211156-9a35ad9afa69 h1:tfi47IGun33ah1nLO6DCJuWGRzE02Sdb3mP6CfUfX9Y=
+github.com/siku2/arigo v0.2.1-0.20240914211156-9a35ad9afa69/go.mod h1:/slSGOCL5awvY4Q9SlyR15wBjeGllHLrLE1E/2MztMQ=
 github.com/stoewer/go-strcase v1.3.0 h1:g0eASXYtp+yvN9fK8sH94oCIk0fau9uV1/ZdJ0AVEzs=
 github.com/stoewer/go-strcase v1.3.0/go.mod h1:fAH5hQ5pehh+j3nZfvwdk2RgEgQjAoM8wodgtPmh1xo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
