@@ -14,7 +14,7 @@ type Collector interface {
 	Path() string
 }
 
-func TestCollectorThenClose(col Collector) (err error) {
+func TestCollector(col Collector) (err error) {
 	ch0 := make(chan *prometheus.Desc, 1)
 	go func() {
 		col.Describe(ch0)
@@ -38,5 +38,10 @@ func TestCollectorThenClose(col Collector) (err error) {
 		}
 		fmt.Println(dmetric.String())
 	}
-	return col.Close()
+	return
+}
+
+func TestCollectorThenClose(col Collector) (err error) {
+	defer col.Close()
+	return TestCollector(col)
 }
