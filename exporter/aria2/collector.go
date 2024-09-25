@@ -45,7 +45,7 @@ const (
 	reconnect_interval = 1 * time.Second
 )
 
-func (s *server) reconnect() {
+func (s *server) reconnect() error {
 	var err error
 	bak := s.Client
 	slog.Warn("try to reconnect to aria2 rpc", "rpc", s.Rpc)
@@ -55,10 +55,11 @@ func (s *server) reconnect() {
 			slog.Warn("failed to reconnect aria2 rpc", "rpc", s.Rpc, "retry", fmt.Sprintf("%d/%d", i+1, reconnect_times), "err", err)
 			time.Sleep(reconnect_interval)
 		} else {
-			return
+			return nil
 		}
 	}
 	s.Client = bak
+	return err
 }
 
 func NewCollector(conf Conf) (col *collector, err error) {
@@ -78,7 +79,10 @@ func NewCollector(conf Conf) (col *collector, err error) {
 		}
 		err = col.servers[i].connect()
 		if err != nil {
-			return
+			err = col.servers[i].reconnect()
+			if err != nil {
+				return
+			}
 		}
 	}
 	return
