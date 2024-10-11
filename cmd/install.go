@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strings"
 
@@ -17,12 +18,21 @@ import (
 const (
 	service_file_path       = "/etc/systemd/system/go-misc-exporter.service"
 	alias_service_file_path = "/etc/systemd/system/gme.service"
-	default_conf_file_path  = "/etc/gme/conf.json"
 )
+
+var default_conf_file_path = func() string {
+	if runtime.GOOS == "windows" {
+		return ".\\conf.json"
+	}
+	return "/etc/gme/conf.json"
+}()
 
 var ErrUserCanceled = errors.New("user canceled")
 
 func install_service() (err error) {
+	if runtime.GOOS != "linux" {
+		return errors.New("only support linux systemd service install")
+	}
 	conf := make(RawConf)
 	_, err = os.Stat(default_conf_file_path)
 	if os.IsNotExist(err) {
