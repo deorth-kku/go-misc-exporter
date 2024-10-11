@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/deorth-kku/go-common"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
-	"github.com/deorth-kku/go-misc-exporter/common"
 )
 
 var _ cmd.Collector = new(collector)

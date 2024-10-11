@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/anatol/smart.go"
-	"github.com/deorth-kku/go-misc-exporter/common"
 	"github.com/dustin/go-humanize"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -121,16 +120,16 @@ func NewNvmeDev(name string, smartdev *smart.NVMeDevice) (d *NvmeDev) {
 	if err == nil {
 		d.info = []string{
 			name,
-			id.ModelNumber(),                      // Model_Number
-			id.SerialNumber(),                     // Serial_Number
-			id.FirmwareRev(),                      // Firmware_Version
-			makeUint16ID(id.VendorID),             // PCI_Vendor_Subsystem_ID
-			"0x" + hex.EncodeToString(id.IEEE[:]), // IEEE_OUI_Identifier
-			bigCapString(common.BigFromInt128(id.Tnvmcap)), // Total_NVM_Capacity
-			bigCapString(common.BigFromInt128(id.Unvmcap)), // Unallocated_NVM_Capacity
-			makeUint16ID(id.Cntlid),                        // Controller_ID
-			makeNvmeVer(id.Ver),                            // NVMe_Version
-			strconv.Itoa(len(nss)),                         // Number_of_Namespaces
+			id.ModelNumber(),                        // Model_Number
+			id.SerialNumber(),                       // Serial_Number
+			id.FirmwareRev(),                        // Firmware_Version
+			makeUint16ID(id.VendorID),               // PCI_Vendor_Subsystem_ID
+			"0x" + hex.EncodeToString(id.IEEE[:]),   // IEEE_OUI_Identifier
+			bigCapString(BigFromInt128(id.Tnvmcap)), // Total_NVM_Capacity
+			bigCapString(BigFromInt128(id.Unvmcap)), // Unallocated_NVM_Capacity
+			makeUint16ID(id.Cntlid),                 // Controller_ID
+			makeNvmeVer(id.Ver),                     // NVMe_Version
+			strconv.Itoa(len(nss)),                  // Number_of_Namespaces
 		}
 		for i, ns := range nss {
 			d.ns_info = append(d.ns_info, []string{
@@ -228,7 +227,7 @@ func (d *NvmeDev) GetMetrics() (out []PromValue) {
 
 	for name, value := range uint128_metrics {
 		template.Desc = nvme_metrics[name]
-		template.Value = common.Uint128toFloat64(value)
+		template.Value = Uint128toFloat64(value)
 		out[i] = template
 		i++
 	}

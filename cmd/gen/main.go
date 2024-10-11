@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/deorth-kku/go-misc-exporter/common"
+	"github.com/deorth-kku/go-common"
 	gocomb "github.com/mxschmitt/golang-combinations"
 )
 

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"runtime"
 
-	"github.com/deorth-kku/go-misc-exporter/common"
+	"github.com/deorth-kku/go-common"
 	"github.com/deorth-kku/ryzenadj-go/lib"
 	"github.com/prometheus/client_golang/prometheus"
 )

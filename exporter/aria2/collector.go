@@ -6,7 +6,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/deorth-kku/go-misc-exporter/common"
+	"github.com/deorth-kku/go-common"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/siku2/arigo"
 )

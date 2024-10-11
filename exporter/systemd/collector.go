@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/coreos/go-systemd/v22/dbus"
-	"github.com/deorth-kku/go-misc-exporter/common"
+	"github.com/deorth-kku/go-common"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/stoewer/go-strcase"
 )

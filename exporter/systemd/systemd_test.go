@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/coreos/go-systemd/v22/dbus"
+	"github.com/deorth-kku/go-common"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
-	"github.com/deorth-kku/go-misc-exporter/common"
 )
 
 func TestGenProps(t *testing.T) {

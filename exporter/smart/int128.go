@@ -1,4 +1,4 @@
-package common
+package smart
 
 import (
 	"encoding/binary"

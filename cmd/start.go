@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"syscall"
 
-	"github.com/deorth-kku/go-misc-exporter/common"
+	"github.com/deorth-kku/go-common"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )

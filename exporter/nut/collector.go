@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/deorth-kku/go-misc-exporter/common"
+	"github.com/deorth-kku/go-common"
 	"github.com/prometheus/client_golang/prometheus"
 	nut "github.com/robbiet480/go.nut"
 )
