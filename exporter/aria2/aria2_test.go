@@ -11,6 +11,8 @@ import (
 	"github.com/siku2/arigo"
 )
 
+var _ cmd.Collector = new(collector)
+
 const (
 	rpcport = "6801"
 	btport  = "6802"
