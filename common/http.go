@@ -32,7 +32,6 @@ func (se *httpserver) ListenAndServe(listen string) (err error) {
 				err = fmt.Errorf("failed to parse mode %s :%s", m, err)
 				return
 			}
-			fmt.Println("mask not setted", t)
 			umask := int(^t)
 			syscall.Umask(umask)
 		}
