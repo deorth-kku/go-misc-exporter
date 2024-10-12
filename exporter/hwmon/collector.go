@@ -3,6 +3,7 @@ package hwmon
 import (
 	"fmt"
 	"log/slog"
+	"strconv"
 
 	"github.com/mt-inside/go-lmsensors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -22,7 +23,7 @@ type collector struct {
 
 func NewCollector(conf Conf) (c *collector, err error) {
 	c = &collector{path: conf.Path}
-	_, err = IntelRaplEnergy()
+	err = Init()
 	if err != nil {
 		return
 	}
@@ -35,21 +36,22 @@ func (c *collector) Close() error {
 }
 
 func (c *collector) Describe(ch chan<- *prometheus.Desc) {
-	c.cpu_energy_desc = prometheus.NewDesc(prefix+"cpu_energy", "cpu total energy use in uj", []string{"sensor"}, nil)
+	c.cpu_energy_desc = prometheus.NewDesc(prefix+"cpu_energy", "cpu total energy use in uj", []string{"package", "sensor"}, nil)
 	c.fan_speed_desc = prometheus.NewDesc(prefix+"fan_speed", "fan speed from libsensors", []string{"chip", "sensor"}, nil)
 	ch <- c.cpu_energy_desc
 	ch <- c.fan_speed_desc
 }
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
-	rapl, err := IntelRaplEnergy()
+	rapl, err := UseSensors()
 	if err != nil {
 		slog.Error("failed to get rapl energy", "err", err)
 	} else {
 		for pkg, value := range rapl {
-			ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value.Package), fmt.Sprintf("socket-%d,package", pkg))
+			pkgstr := strconv.Itoa(pkg)
+			ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value.Package), pkgstr, "package")
 			for core, value := range value.PerCore {
-				ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), fmt.Sprintf("socket-%d,core-%d", pkg, core))
+				ch <- prometheus.MustNewConstMetric(c.cpu_energy_desc, prometheus.CounterValue, float64(value), pkgstr, fmt.Sprintf("core-%d", core))
 			}
 		}
 	}

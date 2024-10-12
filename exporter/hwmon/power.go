@@ -1,62 +1,110 @@
 package hwmon
 
 import (
+	"encoding/binary"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
+	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/deorth-kku/go-common"
 )
 
 const (
 	rapl_path   = "/sys/class/powercap/intel-rapl"
 	rapl_head   = "intel-rapl:"
 	uj_basefile = "energy_uj"
+
+	UNIT_MSR             = 0xC0010299
+	CORE_MSR             = 0xC001029A
+	PACKAGE_MSR          = 0xC001029B
+	ENERGY_UNIT_MASK     = 0x1F00
+	MICRO_JOULE_IN_JOULE = 1e6
 )
 
-type RaplPackageEnergy struct {
-	Package uint64
-	PerCore []uint64
+type packagedata[T any] struct {
+	Package T
+	PerCore []T
 }
 
-func IntelRaplEnergy() (energy_uj []RaplPackageEnergy, err error) {
+type packageFiles packagedata[string]
+type PackageEnergy packagedata[uint64]
+
+var (
+	intel_rapl_files []packageFiles
+	amd_msr_files    []packageFiles
+	UseSensors       func() ([]PackageEnergy, error)
+)
+
+func Init() error {
+	amd, err := detect_amd_msr()
+	if err == nil {
+		amd_msr_files = amd
+		UseSensors = AMDMSREnergy
+		return nil
+	}
+	intel, err := detect_intel_rapl()
+	if err == nil {
+		intel_rapl_files = intel
+		UseSensors = IntelRaplEnergy
+	}
+	return err
+}
+
+func detect_intel_rapl() (files []packageFiles, err error) {
 	dirs, err := os.ReadDir(rapl_path)
 	if err != nil {
 		return
 	}
 	for _, dir := range dirs {
 		if dir.IsDir() && strings.HasPrefix(dir.Name(), rapl_head) {
-			var pkg RaplPackageEnergy
+			var pkg packageFiles
 			pkg_dir := filepath.Join(rapl_path, dir.Name())
-			uj_file := filepath.Join(pkg_dir, uj_basefile)
-			pkg.Package, err = readRaplFile(uj_file)
-			if err != nil {
-				return
-			}
+			pkg.Package = filepath.Join(pkg_dir, uj_basefile)
 
 			dirs, err = os.ReadDir(pkg_dir)
 			if err != nil {
 				return
 			}
 			for _, dir := range dirs {
-				var core uint64
 				if dir.IsDir() && strings.HasPrefix(dir.Name(), rapl_head) {
-					uj_file := filepath.Join(pkg_dir, dir.Name(), uj_basefile)
-					core, err = readRaplFile(uj_file)
-					if err != nil {
-						return
-					}
-					pkg.PerCore = append(pkg.PerCore, core)
+					pkg.PerCore = append(pkg.PerCore, filepath.Join(pkg_dir, dir.Name(), uj_basefile))
 				}
 			}
-			energy_uj = append(energy_uj, pkg)
+			files = append(files, pkg)
 		}
 	}
 	return
 }
 
-func readRaplFile(uj_file string) (uint64, error) {
-	if _, err := os.Stat(uj_file); err == nil {
-		data, err := os.ReadFile(uj_file)
+func IntelRaplEnergy() (energy_uj []PackageEnergy, err error) {
+	if len(intel_rapl_files) == 0 {
+		return nil, errors.New("intel rapl not initialize")
+	}
+	energy_uj = make([]PackageEnergy, len(intel_rapl_files))
+	for i, pkg := range intel_rapl_files {
+		energy_uj[i].Package, err = readFileAsUint(pkg.Package)
+		if err != nil {
+			return
+		}
+		energy_uj[i].PerCore = make([]uint64, len(pkg.PerCore))
+		for j, core := range pkg.PerCore {
+			energy_uj[i].PerCore[j], err = readFileAsUint(core)
+			if err != nil {
+				return
+			}
+		}
+	}
+	return
+}
+
+func readFileAsUint(file string) (uint64, error) {
+	if _, err := os.Stat(file); err == nil {
+		data, err := os.ReadFile(file)
 		if err != nil {
 			return 0, err
 		}
@@ -64,4 +112,108 @@ func readRaplFile(uj_file string) (uint64, error) {
 	} else {
 		return 0, err
 	}
+}
+
+func readMSR(file string, offsets ...int64) (data []uint64, err error) {
+	f, err := os.Open(file)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	data = make([]uint64, len(offsets))
+	for i, offset := range offsets {
+		_, err = f.Seek(offset, 0)
+		if err != nil {
+			return
+		}
+		raw := make([]byte, 8)
+		_, err = f.Read(raw)
+		if err != nil {
+			return
+		}
+		data[i] = binary.LittleEndian.Uint64(raw)
+	}
+	return
+}
+
+func energyFactor(unit_msr uint64) uint64 {
+	return (unit_msr & ENERGY_UNIT_MASK) >> 8
+}
+
+func readCoreEnergyUj(file string) (uint64, error) {
+	data, err := readMSR(file, UNIT_MSR, CORE_MSR)
+	if err != nil {
+		return 0, err
+	}
+	return energyFactor(data[0]) * data[1], nil
+}
+
+func readPackageEnergyUj(file string) (uint64, error) {
+	data, err := readMSR(file, UNIT_MSR, PACKAGE_MSR)
+	if err != nil {
+		return 0, err
+	}
+	return energyFactor(data[0]) * data[1], nil
+}
+
+func detect_amd_msr() (files []packageFiles, err error) {
+	cpu_struct := make(map[uint64]common.Set[uint64])
+	var pkgid, cid uint64
+	for i := range runtime.NumCPU() {
+		pkgid, err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/physical_package_id", i))
+		if err != nil {
+			return
+		}
+		set, ok := cpu_struct[pkgid]
+		if !ok {
+			set = common.NewSet[uint64]()
+			cpu_struct[pkgid] = set
+		}
+		cid, err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/core_id", i))
+		if !set.Has(cid) {
+			set.Add(cid)
+		}
+	}
+	files = make([]packageFiles, len(cpu_struct))
+	for i := range files {
+		pkg, ok := cpu_struct[uint64(i)]
+		if !ok {
+			err = fmt.Errorf("missing package %d", i)
+			return
+		}
+		if pkg.Len() == 0 {
+			err = fmt.Errorf("no core for package %d", i)
+			return
+		}
+		pkg_slice := pkg.Slice()
+		slices.Sort(pkg_slice)
+		files[i].Package = fmt.Sprintf("/dev/cpu/%d/msr", pkg_slice[0])
+		files[i].PerCore = make([]string, len(pkg_slice))
+		for ci, c := range pkg_slice {
+			files[i].PerCore[ci] = fmt.Sprintf("/dev/cpu/%d/msr", c)
+		}
+	}
+	return
+}
+
+func AMDMSREnergy() (e []PackageEnergy, err error) {
+	if len(amd_msr_files) == 0 {
+		err = errors.New("amd msr not initialize")
+		return
+	}
+	e = make([]PackageEnergy, len(amd_msr_files))
+	for i, pkg := range amd_msr_files {
+		e[i].Package, err = readPackageEnergyUj(pkg.Package)
+		if err != nil {
+			return
+		}
+		e[i].PerCore = make([]uint64, len(pkg.PerCore))
+		for j, core := range pkg.PerCore {
+			e[i].PerCore[j], err = readCoreEnergyUj(core)
+			if err != nil {
+				return
+			}
+		}
+	}
+	return
 }
