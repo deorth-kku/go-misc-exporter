@@ -55,6 +55,17 @@ func Init() error {
 	return err
 }
 
+func is_file(file string) error {
+	stat, err := os.Stat(file)
+	if err != nil {
+		return err
+	}
+	if stat.IsDir() {
+		return fmt.Errorf("%s is a dir", file)
+	}
+	return nil
+}
+
 func detect_intel_rapl() (files []packageFiles, err error) {
 	dirs, err := os.ReadDir(rapl_path)
 	if err != nil {
@@ -65,14 +76,22 @@ func detect_intel_rapl() (files []packageFiles, err error) {
 			var pkg packageFiles
 			pkg_dir := filepath.Join(rapl_path, dir.Name())
 			pkg.Package = filepath.Join(pkg_dir, uj_basefile)
-
+			err = is_file(pkg.Package)
+			if err != nil {
+				return
+			}
 			dirs, err = os.ReadDir(pkg_dir)
 			if err != nil {
 				return
 			}
 			for _, dir := range dirs {
 				if dir.IsDir() && strings.HasPrefix(dir.Name(), rapl_head) {
-					pkg.PerCore = append(pkg.PerCore, filepath.Join(pkg_dir, dir.Name(), uj_basefile))
+					file := filepath.Join(pkg_dir, dir.Name(), uj_basefile)
+					err = is_file(file)
+					if err != nil {
+						return
+					}
+					pkg.PerCore = append(pkg.PerCore, file)
 				}
 			}
 			files = append(files, pkg)
@@ -188,9 +207,17 @@ func detect_amd_msr() (files []packageFiles, err error) {
 		pkg_slice := pkg.Slice()
 		slices.Sort(pkg_slice)
 		files[i].Package = fmt.Sprintf("/dev/cpu/%d/msr", pkg_slice[0])
+		err = is_file(files[i].Package)
+		if err != nil {
+			return
+		}
 		files[i].PerCore = make([]string, len(pkg_slice))
 		for ci, c := range pkg_slice {
 			files[i].PerCore[ci] = fmt.Sprintf("/dev/cpu/%d/msr", c)
+			err = is_file(files[i].PerCore[ci])
+			if err != nil {
+				return
+			}
 		}
 	}
 	return
