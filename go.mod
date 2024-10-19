@@ -5,12 +5,12 @@ go 1.23.0
 require (
 	github.com/anatol/smart.go v0.0.0-20241007162712-be6d7524480a
 	github.com/coreos/go-systemd/v22 v22.5.1-0.20231103132048-7d375ecc2b09
-	github.com/deorth-kku/go-common v0.0.0-20241011114157-14e74507484d
+	github.com/deorth-kku/go-common v0.0.0-20241019024114-20ea81dd26aa
 	github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818
 	github.com/dustin/go-humanize v1.0.1
 	github.com/mt-inside/go-lmsensors v0.0.3
 	github.com/mxschmitt/golang-combinations v1.2.0
-	github.com/prometheus/client_golang v1.20.4
+	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/client_model v0.6.1
 	github.com/robbiet480/go.nut v0.0.0-20240622015809-60e196249c53
 	github.com/siku2/arigo v0.2.1-0.20240914211156-9a35ad9afa69
