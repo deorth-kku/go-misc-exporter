@@ -20,6 +20,10 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/deorth-kku/go-common v0.0.0-20241019024114-20ea81dd26aa h1:yJocWojrfeBzYxgWaXy9jEmL+CupnUUs8TpS07mL774=
 github.com/deorth-kku/go-common v0.0.0-20241019024114-20ea81dd26aa/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
+github.com/deorth-kku/go-common v0.0.0-20241023034202-80cdc30f1302 h1:1+Ej8xwRTl6mR5SGH8Z/tQu/l/mR/GXVGq8pu1kB+Hg=
+github.com/deorth-kku/go-common v0.0.0-20241023034202-80cdc30f1302/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
+github.com/deorth-kku/go-common v0.0.0-20241023041823-0463c99f696d h1:B1zes8q+Z+zbfaKA3gCPP2yVrqDSAnTY6J6u70D4K3A=
+github.com/deorth-kku/go-common v0.0.0-20241023041823-0463c99f696d/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
 github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818 h1:HG5p4t53JBhkllvgx8y1KUTouPXzNpuO9uR5cWVlbrM=
 github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818/go.mod h1:GXZYyPrCicsDnWZEVm0V9yy+SFYnbcp5cNZ05K3wbUs=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=

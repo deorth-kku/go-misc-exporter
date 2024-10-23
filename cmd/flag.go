@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/deorth-kku/go-common"
 )
 
 type RawConf = map[string]json.RawMessage
@@ -61,6 +63,19 @@ func InitFlags() (rawconf RawConf, err error) {
 	raw, ok := rawconf["exporter"]
 	if ok {
 		err = json.Unmarshal(raw, &conf)
+		if err != nil {
+			return
+		}
+	}
+	if isRunningUnderSystemd() && len(conf.Log.File) == 0 {
+		_, err = common.SetLog(conf.Log.File, conf.Log.Level, common.SlogHideTime{})
+	} else {
+		_, err = common.SetLog(conf.Log.File, conf.Log.Level, common.SlogText{})
 	}
 	return
+}
+
+func isRunningUnderSystemd() bool {
+	_, exists := os.LookupEnv("INVOCATION_ID")
+	return exists
 }

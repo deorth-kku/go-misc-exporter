@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/anatol/smart.go v0.0.0-20241007162712-be6d7524480a
 	github.com/coreos/go-systemd/v22 v22.5.1-0.20231103132048-7d375ecc2b09
-	github.com/deorth-kku/go-common v0.0.0-20241019024114-20ea81dd26aa
+	github.com/deorth-kku/go-common v0.0.0-20241023041823-0463c99f696d
 	github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818
 	github.com/dustin/go-humanize v1.0.1
 	github.com/mt-inside/go-lmsensors v0.0.3

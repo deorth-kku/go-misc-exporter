@@ -10,9 +10,15 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+type LogSettings struct {
+	File  string `json:"file,omitempty"`
+	Level string `json:"level,omitempty"`
+}
+
 type Conf struct {
-	Listen string `json:"listen,omitempty"`
-	Path   string `json:"path,omitempty"`
+	Listen string      `json:"listen,omitempty"`
+	Path   string      `json:"path,omitempty"`
+	Log    LogSettings `json:"log,omitempty"`
 }
 
 var conf Conf
@@ -34,8 +40,8 @@ func StartCollectors(cs ...Collector) (err error) {
 
 	if len(conf.Path) != 0 {
 		server.Handle(conf.Path, promhttp.Handler())
-	}
 
+	}
 	common.SignalsCallback(func() { server.Shutdown(context.Background()) }, true, syscall.SIGINT, syscall.SIGTERM)
 	err = server.ListenAndServe(conf.Listen)
 	if err != nil {
