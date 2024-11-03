@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/deorth-kku/go-common"
@@ -18,11 +19,12 @@ const (
 )
 
 type collector struct {
-	servers        []*server
-	path           string
-	global_desc    map[string]*prometheus.Desc
-	task_desc      map[string]*prometheus.Desc
-	task_info_desc *prometheus.Desc
+	servers          []*server
+	path             string
+	global_desc      map[string]*prometheus.Desc
+	global_info_desc *prometheus.Desc
+	task_desc        map[string]*prometheus.Desc
+	task_info_desc   *prometheus.Desc
 }
 
 type server struct {
@@ -127,6 +129,8 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	}
 	c.task_info_desc = prometheus.NewDesc(task_head+"info", "", append(task_labels, task_info_labels...), nil)
 	ch <- c.task_info_desc
+	c.global_info_desc = prometheus.NewDesc(global_head+"info", "", append(server_label, "version", "enabledFeatures"), nil)
+	ch <- c.global_info_desc
 }
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
@@ -143,6 +147,13 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 				}
 				ch <- prometheus.MustNewConstMetric(c.global_desc[k], prometheus.GaugeValue, float64(vv), server.Rpc)
 			}
+		}
+		version, err := server.GetVersion()
+		if err != nil {
+			slog.Error("failed to get aria2 global info", "server", server.Rpc, "err", err)
+			server.reconnect()
+		} else {
+			ch <- prometheus.MustNewConstMetric(c.global_info_desc, prometheus.GaugeValue, 0, server.Rpc, version.Version, strings.Join(version.EnabledFeatures, ","))
 		}
 
 		tasks, err := server.TellActive([]string{}...)
