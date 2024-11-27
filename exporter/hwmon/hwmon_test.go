@@ -40,6 +40,15 @@ func TestMSR(t *testing.T) {
 	fmt.Println(data)
 }
 
+func TestFreq(t *testing.T) {
+	data, err := ReadCPUFreq()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	fmt.Println(data)
+}
+
 func TestCollector(t *testing.T) {
 	err := cmd.TestCollectorThenClose(common.Must(NewCollector(Conf{})))
 	if err != nil {

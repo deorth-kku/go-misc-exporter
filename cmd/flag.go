@@ -68,9 +68,9 @@ func InitFlags() (rawconf RawConf, err error) {
 		}
 	}
 	if isRunningUnderSystemd() && len(conf.Log.File) == 0 {
-		_, err = common.SetLog(conf.Log.File, conf.Log.Level, common.SlogHideTime{})
+		err = common.SetLog(conf.Log.File, conf.Log.Level, "DEFAULT", common.SlogHideTime{})
 	} else {
-		_, err = common.SetLog(conf.Log.File, conf.Log.Level, common.SlogText{})
+		err = common.SetLog(conf.Log.File, conf.Log.Level, "TEXT")
 	}
 	return
 }

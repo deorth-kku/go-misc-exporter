@@ -3,9 +3,9 @@ module github.com/deorth-kku/go-misc-exporter
 go 1.23.0
 
 require (
-	github.com/anatol/smart.go v0.0.0-20241007162712-be6d7524480a
+	github.com/anatol/smart.go v0.0.0-20241126061019-f03d79b340d2
 	github.com/coreos/go-systemd/v22 v22.5.1-0.20231103132048-7d375ecc2b09
-	github.com/deorth-kku/go-common v0.0.0-20241023041823-0463c99f696d
+	github.com/deorth-kku/go-common v0.0.0-20241105040240-ff694adf8782
 	github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818
 	github.com/dustin/go-humanize v1.0.1
 	github.com/mt-inside/go-lmsensors v0.0.3
@@ -28,6 +28,6 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/prometheus/common v0.60.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
-	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
 )

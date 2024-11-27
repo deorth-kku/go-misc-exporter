@@ -19,6 +19,8 @@ type collector struct {
 	path            string
 	cpu_energy_desc *prometheus.Desc
 	fan_speed_desc  *prometheus.Desc
+	temp_desc       *prometheus.Desc
+	cpu_freq_desc   *prometheus.Desc
 }
 
 func NewCollector(conf Conf) (c *collector, err error) {
@@ -37,9 +39,14 @@ func (c *collector) Close() error {
 
 func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	c.cpu_energy_desc = prometheus.NewDesc(prefix+"cpu_energy", "cpu total energy use in uj", []string{"package", "sensor"}, nil)
+	c.cpu_freq_desc = prometheus.NewDesc(prefix+"cpu_frequency", "cpu frequency in MHz", []string{"package", "sensor"}, nil)
 	c.fan_speed_desc = prometheus.NewDesc(prefix+"fan_speed", "fan speed from libsensors", []string{"chip", "sensor"}, nil)
+	c.temp_desc = prometheus.NewDesc(prefix+"temp_celsius", "temperature from libsensors", []string{"chip", "sensor"}, nil)
+
 	ch <- c.cpu_energy_desc
+	ch <- c.cpu_freq_desc
 	ch <- c.fan_speed_desc
+	ch <- c.temp_desc
 }
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
@@ -56,6 +63,18 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 		}
 	}
 
+	freqs, err := ReadCPUFreq()
+	if err != nil {
+		slog.Error("failed to read cpu frequency")
+	} else {
+		for pkg, cores := range freqs {
+			pkgstr := strconv.Itoa(pkg)
+			for coreid, value := range cores {
+				ch <- prometheus.MustNewConstMetric(c.cpu_freq_desc, prometheus.GaugeValue, float64(value), pkgstr, fmt.Sprintf("core-%d", coreid))
+			}
+		}
+	}
+
 	sensors, err := lmsensors.Get()
 	if err != nil {
 		slog.Error("failed to get lmsensors data", "err", err)
@@ -63,10 +82,12 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 	}
 	for _, chip := range sensors.Chips {
 		for _, reading := range chip.Sensors {
-			if reading.SensorType != lmsensors.Fan {
-				continue
+			switch reading.SensorType {
+			case lmsensors.Fan:
+				ch <- prometheus.MustNewConstMetric(c.fan_speed_desc, prometheus.GaugeValue, reading.Value, chip.ID, reading.Name)
+			case lmsensors.Temperature:
+				ch <- prometheus.MustNewConstMetric(c.temp_desc, prometheus.GaugeValue, reading.Value, chip.ID, reading.Name)
 			}
-			ch <- prometheus.MustNewConstMetric(c.fan_speed_desc, prometheus.GaugeValue, reading.Value, chip.ID, reading.Name)
 		}
 	}
 }

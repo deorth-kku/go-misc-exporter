@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/deorth-kku/go-common"
 )
@@ -175,23 +176,39 @@ func readPackageEnergyUj(file string) (uint64, error) {
 	return energyFactor(data[0]) * data[1], nil
 }
 
+var (
+	cpu_struct      map[uint64]common.Set[uint64]
+	cpu_struct_err  error
+	cpu_struct_once sync.Once
+)
+
+func detect_cpu_struct() (map[uint64]common.Set[uint64], error) {
+	cpu_struct_once.Do(func() {
+		cpu_struct = make(map[uint64]common.Set[uint64])
+		var pkgid, cid uint64
+		for i := range runtime.NumCPU() {
+			pkgid, cpu_struct_err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/physical_package_id", i))
+			if cpu_struct_err != nil {
+				return
+			}
+			set, ok := cpu_struct[pkgid]
+			if !ok {
+				set = common.NewSet[uint64]()
+				cpu_struct[pkgid] = set
+			}
+			cid, cpu_struct_err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/core_id", i))
+			if !set.Has(cid) {
+				set.Add(cid)
+			}
+		}
+	})
+	return cpu_struct, cpu_struct_err
+}
+
 func detect_amd_msr() (files []packageFiles, err error) {
-	cpu_struct := make(map[uint64]common.Set[uint64])
-	var pkgid, cid uint64
-	for i := range runtime.NumCPU() {
-		pkgid, err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/physical_package_id", i))
-		if err != nil {
-			return
-		}
-		set, ok := cpu_struct[pkgid]
-		if !ok {
-			set = common.NewSet[uint64]()
-			cpu_struct[pkgid] = set
-		}
-		cid, err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/core_id", i))
-		if !set.Has(cid) {
-			set.Add(cid)
-		}
+	detect_cpu_struct()
+	if cpu_struct_err != nil {
+		return nil, cpu_struct_err
 	}
 	files = make([]packageFiles, len(cpu_struct))
 	for i := range files {
