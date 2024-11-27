@@ -21,7 +21,11 @@ type Conf struct {
 	Log    LogSettings `json:"log,omitempty"`
 }
 
-var conf Conf
+var conf = Conf{
+	Log: LogSettings{
+		Level: "INFO",
+	},
+}
 
 func StartCollectors(cs ...Collector) (err error) {
 	paths := make(map[string][]prometheus.Collector)
