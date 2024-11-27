@@ -39,7 +39,7 @@ func (c *collector) Close() error {
 
 func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	c.cpu_energy_desc = prometheus.NewDesc(prefix+"cpu_energy", "cpu total energy use in uj", []string{"package", "sensor"}, nil)
-	c.cpu_freq_desc = prometheus.NewDesc(prefix+"cpu_frequency", "cpu frequency in MHz", []string{"package", "sensor"}, nil)
+	c.cpu_freq_desc = prometheus.NewDesc(prefix+"cpu_frequency", "cpu frequency in KHz", []string{"package", "sensor"}, nil)
 	c.fan_speed_desc = prometheus.NewDesc(prefix+"fan_speed", "fan speed from libsensors", []string{"chip", "sensor"}, nil)
 	c.temp_desc = prometheus.NewDesc(prefix+"temp_celsius", "temperature from libsensors", []string{"chip", "sensor"}, nil)
 
