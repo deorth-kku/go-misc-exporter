@@ -41,6 +41,8 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/mt-inside/go-lmsensors v0.0.3 h1:bevKKCgQHW5qIY6rWtwWVNC/OxPF/tg2FmJH68NL0Pc=
 github.com/mt-inside/go-lmsensors v0.0.3/go.mod h1:LReO2RCiAqZ5lx0Ox7IGNnc8A/Vb1sqAerIf21zw08o=
+github.com/mt-inside/go-lmsensors v0.0.4-0.20240206114646-c122d0d81edb h1:vWvxOF3emBSvSI1BvfAFaN1FSm05qlPetS+LBu5pFNE=
+github.com/mt-inside/go-lmsensors v0.0.4-0.20240206114646-c122d0d81edb/go.mod h1:8vgRyIX6RuoY/kKnd3MKasiv0ADbM0DSc5Gu1e7dWwg=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/mxschmitt/golang-combinations v1.2.0 h1:V5E7MncIK8Yr1SL/SpdqMuSquFsfoIs5auI7Y3n8z14=
