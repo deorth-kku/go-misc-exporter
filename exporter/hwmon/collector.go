@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"sync"
+	"sync/atomic"
+	_ "unsafe"
 
 	"github.com/mt-inside/go-lmsensors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -21,6 +24,23 @@ type collector struct {
 	fan_speed_desc  *prometheus.Desc
 	temp_desc       *prometheus.Desc
 	cpu_freq_desc   *prometheus.Desc
+	closed          atomic.Bool
+}
+
+var (
+	lmsensors_init_lock sync.Mutex
+	lmsensors_init_err  error
+	count               atomic.Int32
+)
+
+func init_lmsensors() error {
+	if count.Load() == 0 {
+		lmsensors_init_lock.Lock()
+		lmsensors_init_err = lmsensors.Init()
+		lmsensors_init_lock.Unlock()
+	}
+	count.Add(1)
+	return lmsensors_init_err
 }
 
 func NewCollector(conf Conf) (c *collector, err error) {
@@ -29,25 +49,36 @@ func NewCollector(conf Conf) (c *collector, err error) {
 	if err != nil {
 		return
 	}
-	err = lmsensors.Init()
+	err = init_lmsensors()
 	return
 }
 
 func (c *collector) Close() error {
+	if c.closed.Load() {
+		return nil
+	}
+	count.Add(-1)
+	if count.Load() == 0 {
+		c.closed.Store(true)
+		lmsensors.Cleanup()
+	}
 	return nil
 }
 
 func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	c.cpu_energy_desc = prometheus.NewDesc(prefix+"cpu_energy", "cpu total energy use in uj", []string{"package", "sensor"}, nil)
 	c.cpu_freq_desc = prometheus.NewDesc(prefix+"cpu_frequency", "cpu frequency in KHz", []string{"package", "sensor"}, nil)
-	c.fan_speed_desc = prometheus.NewDesc(prefix+"fan_speed", "fan speed from libsensors", []string{"chip", "sensor"}, nil)
-	c.temp_desc = prometheus.NewDesc(prefix+"temp_celsius", "temperature from libsensors", []string{"chip", "sensor", "type"}, nil)
+	c.fan_speed_desc = prometheus.NewDesc(prefix+"fan_speed", "fan speed from libsensors", []string{"chip", "adapter", "sensor"}, nil)
+	c.temp_desc = prometheus.NewDesc(prefix+"temp_celsius", "temperature from libsensors", []string{"chip", "adapter", "sensor", "type"}, nil)
 
 	ch <- c.cpu_energy_desc
 	ch <- c.cpu_freq_desc
 	ch <- c.fan_speed_desc
 	ch <- c.temp_desc
 }
+
+//go:linkname chips github.com/mt-inside/go-lmsensors.chips
+func chips(func(lmsensors.ChipPtr) bool)
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
 	rapl, err := UseSensors()
@@ -75,18 +106,14 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 		}
 	}
 
-	sensors, err := lmsensors.Get()
-	if err != nil {
-		slog.Error("failed to get lmsensors data", "err", err)
-		return
-	}
-	for _, chip := range sensors.Chips {
-		for _, reading := range chip.Sensors {
+	for chip := range chips {
+		chipname, adp := chip.Name(), chip.Adapter()
+		for reading := range chip.Sensors {
 			switch r := reading.(type) {
 			case *lmsensors.FanSensor:
-				ch <- prometheus.MustNewConstMetric(c.fan_speed_desc, prometheus.GaugeValue, r.Value, chip.ID, r.Name)
+				ch <- prometheus.MustNewConstMetric(c.fan_speed_desc, prometheus.GaugeValue, r.Value, chipname, adp, r.Name)
 			case *lmsensors.TempSensor:
-				ch <- prometheus.MustNewConstMetric(c.temp_desc, prometheus.GaugeValue, r.Value, chip.ID, r.Name, r.TempType.String())
+				ch <- prometheus.MustNewConstMetric(c.temp_desc, prometheus.GaugeValue, r.Value, chipname, adp, r.Name, r.TempType.String())
 			}
 		}
 	}

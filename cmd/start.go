@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"context"
-	"log/slog"
+	"fmt"
 	"net/http"
 	"net/http/pprof"
 	rtpprof "runtime/pprof"
+	"slices"
+	"strings"
+	"sync"
 	"syscall"
 
 	"github.com/deorth-kku/go-common"
@@ -80,10 +83,25 @@ func StartCollectors(cs ...Collector) (err error) {
 	for path, hfunc := range conf.Pprof.Handlers {
 		server.HandleFunc(path, hfunc)
 	}
-	common.SignalsCallback(func() { server.Shutdown(context.Background()) }, true, syscall.SIGINT, syscall.SIGTERM)
+	var wg sync.WaitGroup
+	var close_errs []any
+	wg.Add(1)
+	common.SignalsCallback(func() {
+		server.Shutdown(context.Background())
+		for _, c := range cs {
+			err := c.Close()
+			if err != nil {
+				close_errs = append(close_errs, err)
+			}
+		}
+		wg.Done()
+	}, true, syscall.SIGINT, syscall.SIGTERM)
 	err = server.ListenAndServe(conf.Listen)
-	if err != nil {
-		slog.Error("http server exit with error", "err", err)
+	wg.Wait()
+	if len(close_errs) != 0 {
+		errfmt := "http server exit: %w, collecter close errors: %w" + strings.Repeat(", %w", len(close_errs)-1)
+		close_errs = slices.Insert(close_errs, 0, any(err))
+		err = fmt.Errorf(errfmt, close_errs...)
 	}
 	return
 }

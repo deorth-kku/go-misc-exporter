@@ -30,7 +30,7 @@ func TestCollector(col Collector) (err error) {
 		close(ch1)
 	}()
 	dmetric := new(dto.Metric)
-	for metr, ok := <-ch1; ok; metr, ok = <-ch1 {
+	for metr := range ch1 {
 		err = metr.Write(dmetric)
 		if err != nil {
 			col.Close()
