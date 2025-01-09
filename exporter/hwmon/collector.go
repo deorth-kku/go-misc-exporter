@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
-	_ "unsafe"
 
 	"github.com/mt-inside/go-lmsensors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -83,9 +82,6 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.current_desc
 }
 
-//go:linkname chips github.com/mt-inside/go-lmsensors.chips
-func chips(func(lmsensors.ChipPtr) bool)
-
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
 	rapl, err := UseSensors()
 	if err != nil {
@@ -112,9 +108,13 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 		}
 	}
 
-	for chip := range chips {
+	for _, chip := range lmsensors.Chips {
 		chipname, adp := chip.Name(), chip.Adapter()
-		for reading := range chip.Sensors {
+		for _, feat := range chip.Features {
+			reading, err := feat.Sensor()
+			if err != nil {
+				continue
+			}
 			switch r := reading.(type) {
 			case *lmsensors.FanSensor:
 				ch <- prometheus.MustNewConstMetric(c.fan_speed_desc, prometheus.GaugeValue, r.Value, chipname, adp, r.Name)
