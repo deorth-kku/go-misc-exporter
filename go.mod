@@ -5,10 +5,10 @@ go 1.23.0
 require (
 	github.com/anatol/smart.go v0.0.0-20241126061019-f03d79b340d2
 	github.com/coreos/go-systemd/v22 v22.5.1-0.20231103132048-7d375ecc2b09
-	github.com/deorth-kku/go-common v0.0.0-20250106153037-448c3a31d021
+	github.com/deorth-kku/go-common v0.0.0-20250124030454-3d3b2fff4562
 	github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818
 	github.com/dustin/go-humanize v1.0.1
-	github.com/mt-inside/go-lmsensors v0.0.4-0.20240206114646-c122d0d81edb
+	github.com/mt-inside/go-lmsensors v1.99.9-dev
 	github.com/mxschmitt/golang-combinations v1.2.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/client_model v0.6.1
@@ -17,7 +17,7 @@ require (
 	github.com/stoewer/go-strcase v1.3.0
 )
 
-replace github.com/mt-inside/go-lmsensors v0.0.4-0.20240206114646-c122d0d81edb => ../go-lmsensors
+replace github.com/mt-inside/go-lmsensors v1.99.9-dev => github.com/deorth-kku/go-lmsensors v0.0.0-20250111035639-a242ac11bb74
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

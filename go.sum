@@ -18,10 +18,10 @@ github.com/coreos/go-systemd/v22 v22.5.1-0.20231103132048-7d375ecc2b09/go.mod h1
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/deorth-kku/go-common v0.0.0-20241105040240-ff694adf8782 h1:A/tehtlYhZkokFpJoo7s2nBDHWXpPXxShkZkN0Qzhmw=
-github.com/deorth-kku/go-common v0.0.0-20241105040240-ff694adf8782/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
-github.com/deorth-kku/go-common v0.0.0-20250106153037-448c3a31d021 h1:Tciz/VLpkz1b4TQFjRHHXZ2VBAMOeI1ZjCSqRrusK5Y=
-github.com/deorth-kku/go-common v0.0.0-20250106153037-448c3a31d021/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
+github.com/deorth-kku/go-common v0.0.0-20250124030454-3d3b2fff4562 h1:OCFd5Bi+D5IMe/mkvAk0hPTbYap8NsLiVa8QQ8giqUY=
+github.com/deorth-kku/go-common v0.0.0-20250124030454-3d3b2fff4562/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
+github.com/deorth-kku/go-lmsensors v0.0.0-20250111035639-a242ac11bb74 h1:VQH1SnoH7WgZudwloq2EaaconHDy95bA29YvCeyg3vs=
+github.com/deorth-kku/go-lmsensors v0.0.0-20250111035639-a242ac11bb74/go.mod h1:omJ6vVKFBfPniRMVoivx6Qfwe36X6B6mTScWAfWgH/g=
 github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818 h1:HG5p4t53JBhkllvgx8y1KUTouPXzNpuO9uR5cWVlbrM=
 github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818/go.mod h1:GXZYyPrCicsDnWZEVm0V9yy+SFYnbcp5cNZ05K3wbUs=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
@@ -39,10 +39,6 @@ github.com/klauspost/compress v1.17.10 h1:oXAz+Vh0PMUvJczoi+flxpnBEPxoER1IaAnU/N
 github.com/klauspost/compress v1.17.10/go.mod h1:pMDklpSncoRMuLFrf1W9Ss9KT+0rH90U12bZKk7uwG0=
 github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
-github.com/mt-inside/go-lmsensors v0.0.3 h1:bevKKCgQHW5qIY6rWtwWVNC/OxPF/tg2FmJH68NL0Pc=
-github.com/mt-inside/go-lmsensors v0.0.3/go.mod h1:LReO2RCiAqZ5lx0Ox7IGNnc8A/Vb1sqAerIf21zw08o=
-github.com/mt-inside/go-lmsensors v0.0.4-0.20240206114646-c122d0d81edb h1:vWvxOF3emBSvSI1BvfAFaN1FSm05qlPetS+LBu5pFNE=
-github.com/mt-inside/go-lmsensors v0.0.4-0.20240206114646-c122d0d81edb/go.mod h1:8vgRyIX6RuoY/kKnd3MKasiv0ADbM0DSc5Gu1e7dWwg=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/mxschmitt/golang-combinations v1.2.0 h1:V5E7MncIK8Yr1SL/SpdqMuSquFsfoIs5auI7Y3n8z14=
