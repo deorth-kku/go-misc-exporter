@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/coreos/go-systemd/v22/unit"
+	"github.com/deorth-kku/go-common"
 )
 
 const (
@@ -27,7 +28,7 @@ var default_conf_file_path = func() string {
 	return "/etc/gme/conf.json"
 }()
 
-var ErrUserCanceled = errors.New("user canceled")
+const ErrUserCanceled = common.ErrorString("user canceled")
 
 func install_service() (err error) {
 	if runtime.GOOS != "linux" {
@@ -43,35 +44,35 @@ func install_service() (err error) {
 			return
 		}
 		conf["exporter"] = data
-		data, err = json.Marshal(conf)
-		if err != nil {
-			return
-		}
 		err = os.Mkdir(filepath.Dir(default_conf_file_path), 755)
-		if err != nil {
+		if errors.Is(err, os.ErrExist) {
+		} else if err != nil {
 			return
 		}
 		f, err := os.Create(default_conf_file_path)
 		if err != nil {
 			return err
 		}
-		_, err = f.Write(data)
+		defer f.Close()
+		enc := json.NewEncoder(f)
+		enc.SetEscapeHTML(false)
+		enc.SetIndent("", "  ")
+		err = enc.Encode(conf)
 		if err != nil {
 			return err
 		}
-		f.Close()
 	} else if err == nil {
 		slog.Info("config file exists, verify", "conf", default_conf_file_path)
 		f, err := os.Open(default_conf_file_path)
 		if err != nil {
 			return err
 		}
+		defer f.Close()
 		decoder := json.NewDecoder(f)
 		err = decoder.Decode(&conf)
 		if err != nil {
 			return err
 		}
-		f.Close()
 		slog.Info("verify ok")
 	} else {
 		return
