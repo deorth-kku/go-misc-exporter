@@ -19,7 +19,7 @@ func main() {
 	}
 	cs := make([]cmd.Collector, 0)
 
-	hwmon_conf := hwmon.Conf{Path: "/metrics"}
+	hwmon_conf := hwmon.Conf{Path: cmd.DefaultMetricsPath}
 	hwmon_raw, ok := rawconf["hwmon"]
 	if ok {
 		err = json.Unmarshal(hwmon_raw, &hwmon_conf)
@@ -30,13 +30,14 @@ func main() {
 		hwmon_col, err := hwmon.NewCollector(hwmon_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "hwmon", "err", err)
+			return
 		}
 		cs = append(cs, hwmon_col)
 	} else {
 		slog.Info("setion not present, skipping", "exporter", "hwmon")
 	}
 
-	nut_conf := nut.Conf{Path: "/metrics"}
+	nut_conf := nut.Conf{Path: cmd.DefaultMetricsPath}
 	nut_raw, ok := rawconf["nut"]
 	if ok {
 		err = json.Unmarshal(nut_raw, &nut_conf)
@@ -47,13 +48,14 @@ func main() {
 		nut_col, err := nut.NewCollector(nut_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "nut", "err", err)
+			return
 		}
 		cs = append(cs, nut_col)
 	} else {
 		slog.Info("setion not present, skipping", "exporter", "nut")
 	}
 
-	systemd_conf := systemd.Conf{Path: "/metrics"}
+	systemd_conf := systemd.Conf{Path: cmd.DefaultMetricsPath}
 	systemd_raw, ok := rawconf["systemd"]
 	if ok {
 		err = json.Unmarshal(systemd_raw, &systemd_conf)
@@ -64,6 +66,7 @@ func main() {
 		systemd_col, err := systemd.NewCollector(systemd_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "systemd", "err", err)
+			return
 		}
 		cs = append(cs, systemd_col)
 	} else {

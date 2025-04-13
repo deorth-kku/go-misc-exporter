@@ -17,7 +17,7 @@ func main() {
 	}
 	cs := make([]cmd.Collector, 0)
 
-	hwmon_conf := hwmon.Conf{Path: "/metrics"}
+	hwmon_conf := hwmon.Conf{Path: cmd.DefaultMetricsPath}
 	hwmon_raw, ok := rawconf["hwmon"]
 	if ok {
 		err = json.Unmarshal(hwmon_raw, &hwmon_conf)
@@ -28,6 +28,7 @@ func main() {
 		hwmon_col, err := hwmon.NewCollector(hwmon_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "hwmon", "err", err)
+			return
 		}
 		cs = append(cs, hwmon_col)
 	} else {

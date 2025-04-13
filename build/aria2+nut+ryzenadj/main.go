@@ -19,7 +19,7 @@ func main() {
 	}
 	cs := make([]cmd.Collector, 0)
 
-	aria2_conf := aria2.Conf{Path: "/metrics"}
+	aria2_conf := aria2.Conf{Path: cmd.DefaultMetricsPath}
 	aria2_raw, ok := rawconf["aria2"]
 	if ok {
 		err = json.Unmarshal(aria2_raw, &aria2_conf)
@@ -30,13 +30,14 @@ func main() {
 		aria2_col, err := aria2.NewCollector(aria2_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "aria2", "err", err)
+			return
 		}
 		cs = append(cs, aria2_col)
 	} else {
 		slog.Info("setion not present, skipping", "exporter", "aria2")
 	}
 
-	nut_conf := nut.Conf{Path: "/metrics"}
+	nut_conf := nut.Conf{Path: cmd.DefaultMetricsPath}
 	nut_raw, ok := rawconf["nut"]
 	if ok {
 		err = json.Unmarshal(nut_raw, &nut_conf)
@@ -47,13 +48,14 @@ func main() {
 		nut_col, err := nut.NewCollector(nut_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "nut", "err", err)
+			return
 		}
 		cs = append(cs, nut_col)
 	} else {
 		slog.Info("setion not present, skipping", "exporter", "nut")
 	}
 
-	ryzenadj_conf := ryzenadj.Conf{Path: "/metrics"}
+	ryzenadj_conf := ryzenadj.Conf{Path: cmd.DefaultMetricsPath}
 	ryzenadj_raw, ok := rawconf["ryzenadj"]
 	if ok {
 		err = json.Unmarshal(ryzenadj_raw, &ryzenadj_conf)
@@ -64,6 +66,7 @@ func main() {
 		ryzenadj_col, err := ryzenadj.NewCollector(ryzenadj_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "ryzenadj", "err", err)
+			return
 		}
 		cs = append(cs, ryzenadj_col)
 	} else {

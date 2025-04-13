@@ -19,6 +19,7 @@ import (
 const (
 	service_file_path       = "/etc/systemd/system/go-misc-exporter.service"
 	alias_service_file_path = "/etc/systemd/system/gme.service"
+	DefaultMetricsPath      = "/metrics"
 )
 
 var default_conf_file_path = func() string {
@@ -44,7 +45,7 @@ func install_service() (err error) {
 			return
 		}
 		conf["exporter"] = data
-		err = os.Mkdir(filepath.Dir(default_conf_file_path), 755)
+		err = os.Mkdir(filepath.Dir(default_conf_file_path), 0755)
 		if errors.Is(err, os.ErrExist) {
 		} else if err != nil {
 			return

@@ -17,7 +17,7 @@ func main() {
 	}
 	cs := make([]cmd.Collector, 0)
 
-	ryzenadj_conf := ryzenadj.Conf{Path: "/metrics"}
+	ryzenadj_conf := ryzenadj.Conf{Path: cmd.DefaultMetricsPath}
 	ryzenadj_raw, ok := rawconf["ryzenadj"]
 	if ok {
 		err = json.Unmarshal(ryzenadj_raw, &ryzenadj_conf)
@@ -28,6 +28,7 @@ func main() {
 		ryzenadj_col, err := ryzenadj.NewCollector(ryzenadj_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "ryzenadj", "err", err)
+			return
 		}
 		cs = append(cs, ryzenadj_col)
 	} else {

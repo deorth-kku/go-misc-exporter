@@ -73,7 +73,7 @@ func main() {
 		`)
 		for _, exp := range comb {
 			const temp = `
-			%s_conf:=%s.Conf{Path:"/metrics"}
+			%s_conf:=%s.Conf{Path:cmd.DefaultMetricsPath}
 			%s_raw,ok:=rawconf["%s"]
 			if ok{
 				err=json.Unmarshal(%s_raw,&%s_conf)
@@ -84,6 +84,7 @@ func main() {
 				%s_col,err:=%s.NewCollector(%s_conf)
 				if err!=nil{
 					slog.Error("failed to init collector","section","%s","err",err)
+					return
 				}
 				cs=append(cs,%s_col)
 			} else {

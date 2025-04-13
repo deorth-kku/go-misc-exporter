@@ -17,7 +17,7 @@ func main() {
 	}
 	cs := make([]cmd.Collector, 0)
 
-	systemd_conf := systemd.Conf{Path: "/metrics"}
+	systemd_conf := systemd.Conf{Path: cmd.DefaultMetricsPath}
 	systemd_raw, ok := rawconf["systemd"]
 	if ok {
 		err = json.Unmarshal(systemd_raw, &systemd_conf)
@@ -28,6 +28,7 @@ func main() {
 		systemd_col, err := systemd.NewCollector(systemd_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "systemd", "err", err)
+			return
 		}
 		cs = append(cs, systemd_col)
 	} else {

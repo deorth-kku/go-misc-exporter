@@ -17,7 +17,7 @@ func main() {
 	}
 	cs := make([]cmd.Collector, 0)
 
-	nut_conf := nut.Conf{Path: "/metrics"}
+	nut_conf := nut.Conf{Path: cmd.DefaultMetricsPath}
 	nut_raw, ok := rawconf["nut"]
 	if ok {
 		err = json.Unmarshal(nut_raw, &nut_conf)
@@ -28,6 +28,7 @@ func main() {
 		nut_col, err := nut.NewCollector(nut_conf)
 		if err != nil {
 			slog.Error("failed to init collector", "section", "nut", "err", err)
+			return
 		}
 		cs = append(cs, nut_col)
 	} else {
