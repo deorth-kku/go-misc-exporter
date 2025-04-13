@@ -2,6 +2,7 @@ package smart
 
 import (
 	"github.com/anatol/smart.go"
+	"github.com/deorth-kku/go-common"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -27,9 +28,12 @@ func NewPromDev(name string) (d PromDev, err error) {
 	switch sm := dev.(type) {
 	case *smart.SataDevice:
 		d = NewSataDev(name, sm)
-	case *smart.ScsiDevice:
 	case *smart.NVMeDevice:
 		d = NewNvmeDev(name, sm)
+	case *smart.ScsiDevice:
+		return nil, common.ErrorString("no support for scsi devices yet")
+	default:
+		return nil, common.ErrorString("unknown device type")
 	}
 	return
 }
