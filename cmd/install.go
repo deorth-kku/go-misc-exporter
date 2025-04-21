@@ -163,6 +163,10 @@ func create_service_file(conf RawConf) (err error) {
 				Name:  "Restart",
 				Value: "on-failure",
 			},
+			{
+				Name:  "RestartSec",
+				Value: "5s",
+			},
 		},
 	}
 
