@@ -16,7 +16,7 @@ type collector struct {
 	path          string
 }
 
-var blacklist_devs = []string{"loop", "zram", "zd", "sr"}
+var blacklist_devs = [...]string{"loop", "zram", "zd", "sr"}
 
 func NewCollector(conf Conf) (*collector, error) {
 	c := collector{path: conf.Path}
@@ -28,7 +28,7 @@ func NewCollector(conf Conf) (*collector, error) {
 			if strings.HasPrefix(disk.Name(), prefix) {
 				goto SkipDev
 			}
-			if slices.Contains(conf.Skip, disk.Name()) {
+			if conf.MatchSkip(disk.Name()) {
 				goto SkipDev
 			}
 		}
