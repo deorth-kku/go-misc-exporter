@@ -23,26 +23,33 @@ type collector struct {
 	ups_info        *prometheus.Desc
 	ups_info_labels []string
 	descs           map[string]*prometheus.Desc
-	info_labels     []string
-	path            string
+	Conf
+}
+
+func (c *collector) reconnect(i int) (err error) {
+	c.clients[i], err = Connect(c.Conf.Servers[i].Host, c.Conf.Servers[i].Port, common.FloatDuration(c.Conf.Servers[i].Timeout))
+	if err != nil {
+		return
+	}
+	if len(c.Conf.Servers[i].Username)+len(c.Conf.Servers[i].Password) != 0 {
+		_, err = c.clients[i].Authenticate(c.Conf.Servers[i].Username, c.Conf.Servers[i].Password)
+		if err != nil {
+			slog.Error("Authenticate failed", "server", c.Conf.Servers[i], "err", err)
+			return
+		}
+	}
+	return
 }
 
 func NewCollector(conf Conf) (c *collector, err error) {
 	c = new(collector)
-	c.path = conf.Path
+	c.Conf = conf
 	c.descs = make(map[string]*prometheus.Desc)
 	c.clients = make([]nut.Client, len(conf.Servers))
-	for i, server := range conf.Servers {
-		c.clients[i], err = Connect(server.Host, server.Port, common.FloatDuration(server.Timeout))
+	for i := range conf.Servers {
+		err = c.reconnect(i)
 		if err != nil {
-			return nil, err
-		}
-		if len(server.Username)+len(server.Password) != 0 {
-			_, err = c.clients[i].Authenticate(server.Username, server.Password)
-			if err != nil {
-				slog.Error("Authenticate failed", "server", server, "err", err)
-				return nil, err
-			}
+			return
 		}
 	}
 	return
@@ -63,7 +70,7 @@ func (c *collector) Close() (err error) {
 }
 
 func (c *collector) Path() string {
-	return c.path
+	return c.Conf.Path
 }
 
 func (c *collector) Describe(ch chan<- *prometheus.Desc) {
@@ -106,12 +113,16 @@ func fix_label(in []string) (out []string) {
 }
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
-	for _, client := range c.clients {
+	for i, client := range c.clients {
 		serverstring := client.Hostname.String()
 		ch <- prometheus.MustNewConstMetric(c.server_info, prometheus.GaugeValue, 0, serverstring, client.Version, client.ProtocolVersion)
 		upslist, err := client.GetUPSList()
 		if err != nil {
 			slog.Error("failed to get ups list", "server", serverstring, "err", err)
+			err = c.reconnect(i)
+			if err != nil {
+				slog.Error("failed to reconnect", "server", serverstring, "err", err)
+			}
 			return
 		}
 		for _, ups := range upslist {
@@ -143,5 +154,4 @@ func (c *collector) Collect(ch chan<- prometheus.Metric) {
 			ch <- prometheus.MustNewConstMetric(c.ups_info, prometheus.GaugeValue, float64(ups.NumberOfLogins), info_list...)
 		}
 	}
-	return
 }
