@@ -12,12 +12,12 @@ type Conf struct {
 func (c Conf) MatchSkip(name string) bool {
 	for i, skip := range c.Skip {
 		if filepath.IsAbs(skip) {
-			if real, err := filepath.EvalSymlinks(skip); err != nil {
+			if real, err := filepath.EvalSymlinks(skip); err == nil {
 				skip = real
 			}
 			c.Skip[i] = filepath.Base(skip)
 		}
-		if skip == name {
+		if name == c.Skip[i] {
 			return true
 		}
 	}

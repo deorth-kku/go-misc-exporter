@@ -3,9 +3,11 @@ package smart
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/anatol/smart.go"
+	"github.com/deorth-kku/go-common"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
 )
 
@@ -73,4 +75,18 @@ func TestParseSpinUpTime(t *testing.T) {
 	} else {
 		t.Errorf("incorrect value %d %d", cur, avg)
 	}
+}
+
+func TestMatchSkip(t *testing.T) {
+	const link = "/tmp/testlink"
+	common.Must0(os.Symlink("/dev/null", link))
+	cfg := Conf{
+		Skip: []string{
+			link,
+		},
+	}
+	if !cfg.MatchSkip("null") {
+		t.Error("failed to match link")
+	}
+	os.Remove(link)
 }
