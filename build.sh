@@ -13,5 +13,6 @@ fi
 export GOAMD64=v3
 
 out="/opt/gme/go-misc-exporter"
+go run github.com/deorth-kku/go-misc-exporter/cmd/gen $@
 go build -o "$out" -ldflags "-s -w" ./build/"$joined"
 echo output file "$out"

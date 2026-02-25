@@ -6,6 +6,7 @@ import (
 	"go/format"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/deorth-kku/go-common"
@@ -13,8 +14,7 @@ import (
 )
 
 var (
-	cmddir      = common.Must(os.Getwd())
-	workdir     = filepath.Dir(cmddir)
+	workdir     = common.Must(os.Getwd())
 	builddir    = filepath.Join(workdir, "build")
 	exporterdir = filepath.Join(workdir, "exporter")
 )
@@ -35,7 +35,12 @@ func main() {
 	if _, err := os.Stat(builddir); os.IsNotExist(err) {
 		common.Must0(os.Mkdir(builddir, 0755))
 	}
-	for _, comb := range gocomb.All(find_exporters()) {
+	list := slices.Clone(os.Args[1:])
+	slices.Sort(list)
+	if len(list) == 0 {
+		list = find_exporters()
+	}
+	for _, comb := range gocomb.All(list) {
 		combname := strings.Join(comb, "+")
 		exporterdir := filepath.Join(builddir, combname)
 		dirstat, err := os.Stat(exporterdir)

@@ -20,6 +20,7 @@ require (
 replace github.com/mt-inside/go-lmsensors v1.99.9-dev => github.com/deorth-kku/go-lmsensors v0.0.0-20250111035639-a242ac11bb74
 
 require (
+	git.dolansoft.org/lorenz/go-zfs v0.0.0-20241011010404-ba106a1b6427
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/hub v1.0.2 // indirect
 	github.com/cenkalti/rpc2 v1.0.4 // indirect
