@@ -7,9 +7,9 @@ import (
 )
 
 type Conf struct {
-	Skip   []string `json:"skip,omitempty"`
-	Path   string   `json:"path,omitempty"`
-	Device string   `json:"device,omitempty"`
+	Skip   []string `json:"skip,omitzero"`
+	Path   string   `json:"path,omitzero"`
+	Device string   `json:"device,omitzero"`
 }
 
 func (c Conf) ListPools() ([]string, error) {

@@ -5,8 +5,8 @@ import (
 )
 
 type Conf struct {
-	Skip []string `json:"skip,omitempty"`
-	Path string   `json:"path,omitempty"`
+	Skip []string `json:"skip,omitzero"`
+	Path string   `json:"path,omitzero"`
 }
 
 func (c Conf) MatchSkip(name string) bool {

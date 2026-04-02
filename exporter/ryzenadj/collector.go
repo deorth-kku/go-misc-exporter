@@ -11,7 +11,7 @@ import (
 )
 
 type Conf struct {
-	Path string `json:"path,omitempty"`
+	Path string `json:"path,omitzero"`
 }
 
 type getFunc func() float32

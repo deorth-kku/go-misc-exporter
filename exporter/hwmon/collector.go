@@ -14,7 +14,7 @@ import (
 const prefix = "hwmon_"
 
 type Conf struct {
-	Path string `json:"path,omitempty"`
+	Path string `json:"path,omitzero"`
 }
 
 type collector struct {

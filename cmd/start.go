@@ -17,15 +17,15 @@ import (
 )
 
 type LogSettings struct {
-	File  string `json:"file,omitempty"`
-	Level string `json:"level,omitempty"`
+	File  string `json:"file,omitzero"`
+	Level string `json:"level,omitzero"`
 }
 
 type Conf struct {
-	Listen string      `json:"listen,omitempty"`
-	Path   string      `json:"path,omitempty"`
-	Log    LogSettings `json:"log,omitempty"`
-	Pprof  PprofPath   `json:"pprof,omitempty"`
+	Listen string      `json:"listen,omitzero"`
+	Path   string      `json:"path,omitzero"`
+	Log    LogSettings `json:"log,omitzero"`
+	Pprof  PprofPath   `json:"pprof,omitzero"`
 }
 
 type PprofPath map[string]string
