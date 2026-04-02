@@ -62,11 +62,13 @@ func InitFlags() (rawconf RawConf, err error) {
 	}
 	raw, ok := rawconf["exporter"]
 	if ok {
+		delete(rawconf, "exporter")
 		err = json.Unmarshal(raw, &conf)
 		if err != nil {
 			return
 		}
 	}
+
 	if isRunningUnderSystemd() && len(conf.Log.File) == 0 {
 		err = common.SetLog(conf.Log.File, conf.Log.Level, "DEFAULT", common.SlogHideTime{})
 	} else {

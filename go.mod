@@ -9,7 +9,6 @@ require (
 	github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818
 	github.com/dustin/go-humanize v1.0.1
 	github.com/mt-inside/go-lmsensors v1.99.9-dev
-	github.com/mxschmitt/golang-combinations v1.2.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/client_model v0.6.1
 	github.com/robbiet480/go.nut v0.0.0-20240622015809-60e196249c53
