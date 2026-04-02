@@ -32,7 +32,7 @@ func NewCollector(name string, data json.RawMessage) (cmd.Collector, error) {
 		return nil, ErrNotRegisted
 	}
 	conf := reflect.New(item.ty)
-	field := conf.FieldByName("Path")
+	field := conf.Elem().FieldByName("Path")
 	if field.IsValid() && field.CanSet() && field.Kind() == reflect.String {
 		field.SetString(cmd.DefaultMetricsPath)
 	}
