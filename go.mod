@@ -1,6 +1,6 @@
 module github.com/deorth-kku/go-misc-exporter
 
-go 1.23.0
+go 1.24.0
 
 require (
 	github.com/anatol/smart.go v0.0.0-20241126061019-f03d79b340d2
@@ -17,7 +17,7 @@ require (
 	github.com/stoewer/go-strcase v1.3.0
 )
 
-replace github.com/mt-inside/go-lmsensors v1.99.9-dev => github.com/deorth-kku/go-lmsensors v0.0.0-20250111035639-a242ac11bb74
+replace github.com/mt-inside/go-lmsensors v1.99.9-dev => github.com/deorth-kku/go-lmsensors v0.0.0-20260402032211-f65228fa8545
 
 require (
 	git.dolansoft.org/lorenz/go-zfs v0.0.0-20241011010404-ba106a1b6427

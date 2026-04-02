@@ -5,7 +5,7 @@ joined=$(IFS=+; echo "${sorted[*]}")
 echo building "$joined"
 
 
-if [ "$joined" == *hwmon* ] || [ "$joined" == *ryzenadj* ]; then
+if [ "$joined" == *ryzenadj* ]; then
     export CGO_ENABLED=1
 else
     export CGO_ENABLED=0

@@ -22,8 +22,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/deorth-kku/go-common v0.0.0-20250124030454-3d3b2fff4562 h1:OCFd5Bi+D5IMe/mkvAk0hPTbYap8NsLiVa8QQ8giqUY=
 github.com/deorth-kku/go-common v0.0.0-20250124030454-3d3b2fff4562/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
-github.com/deorth-kku/go-lmsensors v0.0.0-20250111035639-a242ac11bb74 h1:VQH1SnoH7WgZudwloq2EaaconHDy95bA29YvCeyg3vs=
-github.com/deorth-kku/go-lmsensors v0.0.0-20250111035639-a242ac11bb74/go.mod h1:omJ6vVKFBfPniRMVoivx6Qfwe36X6B6mTScWAfWgH/g=
+github.com/deorth-kku/go-lmsensors v0.0.0-20260402032211-f65228fa8545 h1:QQNmiHFgR0FrAblzAp9CBllYjYCb1dwENBLn5sRZtVA=
+github.com/deorth-kku/go-lmsensors v0.0.0-20260402032211-f65228fa8545/go.mod h1:u1Q6b/K67xr64DujqR1E4LSkdho08t9fzuPwB8VqO8c=
 github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818 h1:HG5p4t53JBhkllvgx8y1KUTouPXzNpuO9uR5cWVlbrM=
 github.com/deorth-kku/ryzenadj-go v0.0.0-20241011071124-61aec1e40818/go.mod h1:GXZYyPrCicsDnWZEVm0V9yy+SFYnbcp5cNZ05K3wbUs=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
