@@ -42,18 +42,25 @@ var (
 )
 
 func Init() error {
-	amd, err := detect_amd_msr()
-	if err == nil {
-		amd_msr_files = amd
-		UseSensors = AMDMSREnergy
-		return nil
+	vender := getCPUVendor()
+	switch vender {
+	case venderAMD:
+		amd, err := detect_amd_msr()
+		if err == nil {
+			amd_msr_files = amd
+			UseSensors = AMDMSREnergy
+		}
+		return err
+	case venderIntel:
+		intel, err := detect_intel_rapl()
+		if err == nil {
+			intel_rapl_files = intel
+			UseSensors = IntelRaplEnergy
+		}
+		return err
+	default:
+		return fmt.Errorf("unknown cpu vender %s", vender)
 	}
-	intel, err := detect_intel_rapl()
-	if err == nil {
-		intel_rapl_files = intel
-		UseSensors = IntelRaplEnergy
-	}
-	return err
 }
 
 func is_file(file string) error {
