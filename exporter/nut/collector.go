@@ -27,7 +27,7 @@ type collector struct {
 }
 
 func (c *collector) reconnect(i int) (err error) {
-	c.clients[i], err = Connect(c.Conf.Servers[i].Host, c.Conf.Servers[i].Port, common.FloatDuration(c.Conf.Servers[i].Timeout))
+	c.clients[i], err = Connect(c.Conf.Servers[i].Host, c.Conf.Servers[i].Port, common.ToDuration(c.Conf.Servers[i].Timeout))
 	if err != nil {
 		return
 	}

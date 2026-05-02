@@ -59,7 +59,7 @@ func NewCollector(conf Conf) (col *collector, err error) {
 	col.descs = make(map[string]*prometheus.Desc)
 	var ctx context.Context
 	ctx, col.cancel = context.WithCancel(context.Background())
-	timer := time.AfterFunc(common.FloatDuration(col.Timeout), col.cancel)
+	timer := time.AfterFunc(common.ToDuration(col.Timeout), col.cancel)
 	defer timer.Stop()
 	col.Conn, err = dbus.NewSystemdConnectionContext(ctx)
 	if err != nil {
