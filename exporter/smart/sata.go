@@ -7,8 +7,10 @@ import (
 	"math/bits"
 	"strconv"
 	"strings"
+	"unsafe"
 
 	"github.com/anatol/smart.go"
+	"github.com/deorth-kku/go-common"
 	"github.com/dustin/go-humanize"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -38,6 +40,8 @@ func NewSataDev(name string, smartdev *smart.SataDevice) (d *SataDev) {
 			fmt.Sprintf("%d bytes logical, %d bytes physical", logicalSectorSize, physicalSectorSize),
 			humanize.Comma(int64(sectors)),
 			fmt.Sprintf("%d rpm", id.RotationRate),
+			// still cannot read form factor
+			//ParseFormFactor(id),
 			ParseSATAVersion(id),
 		}
 	} else {
@@ -55,9 +59,9 @@ func getMetricName(attrName string, num uint8) (metricName string) {
 	if len(attrName) == 0 {
 		return metric_sata + "Unknown_Attribute_" + toHex(num)
 	} else if strings.Contains(attrName, "Unknown") {
-		return metric_sata + strings.Replace(attrName, "-", "_", -1) + "_" + toHex(num)
+		return metric_sata + strings.ReplaceAll(attrName, "-", "_") + "_" + toHex(num)
 	} else {
-		return metric_sata + strings.Replace(attrName, "-", "_", -1)
+		return metric_sata + strings.ReplaceAll(attrName, "-", "_")
 	}
 }
 
@@ -78,7 +82,7 @@ var (
 		"Sector_Sizes",
 		"Sectors",
 		"Rotation_Rate",
-		// I do not know how smartctl read "Form Factor"
+		//"Form_Factor",
 		"SATA_Version",
 	}
 	sata_metrics = map[string]*prometheus.Desc{
@@ -167,13 +171,13 @@ const (
 	sata3_speed = "6.0 Gb/s"
 )
 
-var current_speeds = map[uint16]string{
+var current_speeds = []string{
 	2: sata1_speed,
 	4: sata2_speed,
 	6: sata3_speed,
 }
 
-var sata_versions = map[int]string{
+var sata_versions = []string{
 	0: "ATA8-AST",
 	1: "SATA 1.0a",
 	2: "SATA II Ext",
@@ -184,6 +188,13 @@ var sata_versions = map[int]string{
 	7: "SATA 3.2",
 	8: "SATA 3.3",
 	9: "SATA 3.4",
+}
+
+func sliceget[I common.AnyInt](s []string, i I) string {
+	if int(i) < len(s) {
+		return s[i]
+	}
+	return fmt.Sprintf("0x%02X", i)
 }
 
 func getSupportedSpeed(SATACap uint16) string {
@@ -199,14 +210,34 @@ func getSupportedSpeed(SATACap uint16) string {
 	}
 }
 
-func ParseSATAVersion(d *smart.AtaIdentifyDevice) (sata_version string) {
-	return fmt.Sprintf("%s, %s (current %s)", sata_versions[Log2b(uint(d.TransportMajor&0xfff))], getSupportedSpeed(d.SATACap), current_speeds[d.SATACapAddl&0xe])
+func ParseSATAVersion(d *smart.AtaIdentifyDevice) string {
+	return fmt.Sprintf("%s, %s (current %s)", sliceget(sata_versions, Log2b(d.TransportMajor&0xfff)), getSupportedSpeed(d.SATACap), sliceget(current_speeds, d.SATACapAddl&0xe))
 }
 
-func Log2b(x uint) int {
+var form_factors = []string{
+	0: "unknown",
+	1: "5.25 inches",
+	2: "3.5 inches",
+	3: "2.5 inches",
+	4: "1.8 inches",
+	5: "<1.8 inches",
+	6: "mSATA",
+	7: "M.2",
+}
+
+const IdentifyLen = unsafe.Sizeof(smart.AtaIdentifyDevice{})
+
+func ParseFormFactor(d *smart.AtaIdentifyDevice) string {
+	p := unsafe.Pointer(d)
+	s := (*[IdentifyLen]byte)(p)
+	v := (*s)[337] // ATA Word 168
+	return sliceget(form_factors, v)
+}
+
+func Log2b[T common.UnsignedInt](x T) int {
 	if x == 0 {
 		return 0
 	}
 
-	return bits.Len(x) - 1
+	return bits.Len(uint(x)) - 1
 }
