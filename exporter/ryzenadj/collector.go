@@ -5,7 +5,8 @@ import (
 	"log/slog"
 	"runtime"
 
-	"github.com/deorth-kku/go-common"
+	datatypes "github.com/deorth-kku/go-common/datatypes"
+	cmath "github.com/deorth-kku/go-common/math"
 	"github.com/deorth-kku/ryzenadj-go/lib"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -21,8 +22,8 @@ type collector struct {
 	lib.RyzenAccess
 	Conf
 	infoDesc     *prometheus.Desc
-	getDescs     common.PairSlice[*prometheus.Desc, getFunc]
-	getCoreDescs common.PairSlice[*prometheus.Desc, getCoreFunc]
+	getDescs     datatypes.PairSlice[*prometheus.Desc, getFunc]
+	getCoreDescs datatypes.PairSlice[*prometheus.Desc, getCoreFunc]
 }
 
 var corecount = uint32(runtime.NumCPU())
@@ -49,7 +50,7 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 		"family":             c.GetCpuFamily().String(),
 		"bios_interface_ver": fmt.Sprintf("0x%04X", c.GetBiosIfVer()),
 	})
-	getMap := common.PairSlice[string, getFunc]{
+	getMap := datatypes.PairSlice[string, getFunc]{
 		{Key: "stapm_limit", Value: c.GetStapmLimit},
 		{Key: "stapm_value", Value: c.GetStapmValue},
 		{Key: "fast_limit", Value: c.GetFastLimit},
@@ -92,27 +93,27 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 		{Key: "socket_power", Value: c.GetSocketPower},
 	}
 	for name, get := range getMap.Range {
-		if common.IsNaN(get()) {
+		if cmath.IsNaN(get()) {
 			continue
 		}
-		c.getDescs = append(c.getDescs, common.Pair[*prometheus.Desc, getFunc]{
+		c.getDescs = append(c.getDescs, datatypes.Pair[*prometheus.Desc, getFunc]{
 			Key:   prometheus.NewDesc(head+name, "", nil, nil),
 			Value: get,
 		})
 	}
 
 	core := []string{"core"}
-	getCoreMap := common.PairSlice[string, getCoreFunc]{
+	getCoreMap := datatypes.PairSlice[string, getCoreFunc]{
 		{Key: "core_clk", Value: c.GetCoreClk},
 		{Key: "core_volt", Value: c.GetCoreVolt},
 		{Key: "core_power", Value: c.GetCorePower},
 		{Key: "core_temp", Value: c.GetCoreTemp},
 	}
 	for name, get := range getCoreMap.Range {
-		if common.IsNaN(get(0)) {
+		if cmath.IsNaN(get(0)) {
 			continue
 		}
-		c.getCoreDescs = append(c.getCoreDescs, common.Pair[*prometheus.Desc, getCoreFunc]{
+		c.getCoreDescs = append(c.getCoreDescs, datatypes.Pair[*prometheus.Desc, getCoreFunc]{
 			Key:   prometheus.NewDesc(head+name, "", core, nil),
 			Value: get,
 		})

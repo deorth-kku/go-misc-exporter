@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/deorth-kku/go-common"
+	clog "github.com/deorth-kku/go-common/log"
 )
 
 type RawConf = map[string]json.RawMessage
@@ -70,9 +70,9 @@ func InitFlags() (rawconf RawConf, err error) {
 	}
 
 	if isRunningUnderSystemd() && len(conf.Log.File) == 0 {
-		err = common.SetLog(conf.Log.File, conf.Log.Level, "DEFAULT", common.SlogHideTime{})
+		err = clog.Set(conf.Log.File, conf.Log.Level, "DEFAULT", clog.SlogHideTime{})
 	} else {
-		err = common.SetLog(conf.Log.File, conf.Log.Level, "TEXT")
+		err = clog.Set(conf.Log.File, conf.Log.Level, "TEXT")
 	}
 	return
 }

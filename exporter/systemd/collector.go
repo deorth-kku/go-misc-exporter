@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/coreos/go-systemd/v22/dbus"
-	"github.com/deorth-kku/go-common"
+	ctime "github.com/deorth-kku/go-common/time"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/stoewer/go-strcase"
 )
@@ -59,7 +59,7 @@ func NewCollector(conf Conf) (col *collector, err error) {
 	col.descs = make(map[string]*prometheus.Desc)
 	var ctx context.Context
 	ctx, col.cancel = context.WithCancel(context.Background())
-	timer := time.AfterFunc(common.ToDuration(col.Timeout), col.cancel)
+	timer := time.AfterFunc(ctime.ToDuration(col.Timeout), col.cancel)
 	defer timer.Stop()
 	col.Conn, err = dbus.NewSystemdConnectionContext(ctx)
 	if err != nil {
@@ -120,7 +120,7 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
-	ctx, cancel := common.TimeoutContext(c.Timeout)
+	ctx, cancel := ctime.TimeoutContext(c.Timeout)
 	defer cancel()
 
 	uptimestr, err := c.GetManagerProperty("UserspaceTimestamp")

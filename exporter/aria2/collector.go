@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deorth-kku/go-common"
+	ctime "github.com/deorth-kku/go-common/time"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/siku2/arigo"
 )
@@ -33,7 +33,7 @@ type server struct {
 }
 
 func (s *server) connect() (err error) {
-	ctx, cancal := common.TimeoutContext(s.Timeout)
+	ctx, cancal := ctime.TimeoutContext(s.Timeout)
 	defer cancal()
 	if s.Client != nil {
 		s.Client.Close()

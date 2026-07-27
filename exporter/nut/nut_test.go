@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/deorth-kku/go-common"
+	args "github.com/deorth-kku/go-common/args"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
 )
 
@@ -12,7 +12,7 @@ var _ cmd.Collector = new(collector)
 
 func TestCollector(t *testing.T) {
 	var conf Conf
-	err := json.Unmarshal(common.Must(cmd.InitFlags())["nut"], &conf)
+	err := json.Unmarshal(args.Must(cmd.InitFlags())["nut"], &conf)
 	if err != nil {
 		t.Error(err)
 		return

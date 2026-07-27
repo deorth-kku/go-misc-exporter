@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/coreos/go-systemd/v22/unit"
-	"github.com/deorth-kku/go-common"
+	cerrors "github.com/deorth-kku/go-common/errors"
 )
 
 const (
@@ -29,7 +29,7 @@ var default_conf_file_path = func() string {
 	return "/etc/gme/conf.json"
 }()
 
-const ErrUserCanceled = common.ErrorString("user canceled")
+const ErrUserCanceled = cerrors.String("user canceled")
 
 func install_service() (err error) {
 	if runtime.GOOS != "linux" {

@@ -1,7 +1,6 @@
 package aria2
 
 import (
-	"context"
 	"fmt"
 	"os/exec"
 	"testing"
@@ -28,8 +27,7 @@ func startAria2() {
 
 func TestAria2(t *testing.T) {
 	startAria2()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	cli, err := arigo.DialContext(ctx, wsrpc, secret)
 	if err != nil {
 		t.Error(err)

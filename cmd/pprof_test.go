@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/deorth-kku/go-common"
+	chttp "github.com/deorth-kku/go-common/net/http"
 )
 
 func curl(url string) error {
@@ -32,7 +32,7 @@ func TestPprof(t *testing.T) {
 		"goroutine": "/goroutine",
 		"profile":   "/profile",
 	}
-	s := common.NewHttpServer()
+	s := chttp.NewServer()
 	for path, h := range p.Handlers {
 		s.HandleFunc(path, h)
 	}

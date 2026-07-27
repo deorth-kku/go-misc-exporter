@@ -12,7 +12,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/deorth-kku/go-common"
+	datatypes "github.com/deorth-kku/go-common/datatypes"
 )
 
 const (
@@ -184,14 +184,14 @@ func readPackageEnergyUj(file string) (uint64, error) {
 }
 
 var (
-	cpu_struct      map[uint64]common.Set[uint64]
+	cpu_struct      map[uint64]datatypes.Set[uint64]
 	cpu_struct_err  error
 	cpu_struct_once sync.Once
 )
 
-func detect_cpu_struct() (map[uint64]common.Set[uint64], error) {
+func detect_cpu_struct() (map[uint64]datatypes.Set[uint64], error) {
 	cpu_struct_once.Do(func() {
-		cpu_struct = make(map[uint64]common.Set[uint64])
+		cpu_struct = make(map[uint64]datatypes.Set[uint64])
 		var pkgid, cid uint64
 		for i := range runtime.NumCPU() {
 			pkgid, cpu_struct_err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/physical_package_id", i))
@@ -200,7 +200,7 @@ func detect_cpu_struct() (map[uint64]common.Set[uint64], error) {
 			}
 			set, ok := cpu_struct[pkgid]
 			if !ok {
-				set = common.NewSet[uint64]()
+				set = datatypes.NewSet[uint64]()
 				cpu_struct[pkgid] = set
 			}
 			cid, cpu_struct_err = readFileAsUint(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/topology/core_id", i))

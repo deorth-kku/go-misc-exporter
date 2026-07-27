@@ -9,12 +9,13 @@ import (
 	"testing"
 
 	"github.com/coreos/go-systemd/v22/dbus"
-	"github.com/deorth-kku/go-common"
+	args "github.com/deorth-kku/go-common/args"
+	ctime "github.com/deorth-kku/go-common/time"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
 )
 
 func TestGenProps(t *testing.T) {
-	ctx, cancel := common.TimeoutContext(10.0)
+	ctx, cancel := ctime.TimeoutContext(10.0)
 	defer cancel()
 	d, err := dbus.NewSystemdConnectionContext(ctx)
 	if err != nil {
@@ -50,7 +51,7 @@ func TestGenProps(t *testing.T) {
 }
 
 func TestCollector(t *testing.T) {
-	err := cmd.TestCollectorThenClose(common.Must(NewCollector(Conf{
+	err := cmd.TestCollectorThenClose(args.Must(NewCollector(Conf{
 		States:   []string{"active"},
 		Patterns: []string{"*.service"},
 	})))

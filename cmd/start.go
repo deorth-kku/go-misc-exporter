@@ -11,7 +11,8 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/deorth-kku/go-common"
+	chttp "github.com/deorth-kku/go-common/net/http"
+	csignal "github.com/deorth-kku/go-common/signal"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -68,7 +69,7 @@ func StartCollectors(cs ...Collector) (err error) {
 		paths[c.Path()] = append(paths[c.Path()], c)
 	}
 
-	server := common.NewHttpServer()
+	server := chttp.NewServer()
 
 	for path, cs := range paths {
 		r := prometheus.NewRegistry()
@@ -86,7 +87,7 @@ func StartCollectors(cs ...Collector) (err error) {
 	var wg sync.WaitGroup
 	var close_errs []any
 	wg.Add(1)
-	common.SignalsCallback(func() {
+	csignal.Callback(func() {
 		server.Shutdown(context.Background())
 		for _, c := range cs {
 			err := c.Close()

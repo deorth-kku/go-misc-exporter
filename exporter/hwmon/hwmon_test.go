@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/deorth-kku/go-common"
+	args "github.com/deorth-kku/go-common/args"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
 )
 
@@ -50,7 +50,7 @@ func TestFreq(t *testing.T) {
 }
 
 func TestCollector(t *testing.T) {
-	err := cmd.TestCollectorThenClose(common.Must(NewCollector(Conf{})))
+	err := cmd.TestCollectorThenClose(args.Must(NewCollector(Conf{})))
 	if err != nil {
 		t.Error(err)
 		return

@@ -10,7 +10,7 @@ import (
 	"unsafe"
 
 	"github.com/anatol/smart.go"
-	"github.com/deorth-kku/go-common"
+	cmath "github.com/deorth-kku/go-common/math"
 	"github.com/dustin/go-humanize"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -190,7 +190,7 @@ var sata_versions = []string{
 	9: "SATA 3.4",
 }
 
-func sliceget[I common.AnyInt](s []string, i I) string {
+func sliceget[I cmath.AnyInt](s []string, i I) string {
 	if int(i) < len(s) {
 		return s[i]
 	}
@@ -234,7 +234,7 @@ func ParseFormFactor(d *smart.AtaIdentifyDevice) string {
 	return sliceget(form_factors, v)
 }
 
-func Log2b[T common.UnsignedInt](x T) int {
+func Log2b[T cmath.UnsignedInt](x T) int {
 	if x == 0 {
 		return 0
 	}

@@ -6,7 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/deorth-kku/go-common"
+	args "github.com/deorth-kku/go-common/args"
+	ctime "github.com/deorth-kku/go-common/time"
 	"github.com/prometheus/client_golang/prometheus"
 	nut "github.com/robbiet480/go.nut"
 )
@@ -27,7 +28,7 @@ type collector struct {
 }
 
 func (c *collector) reconnect(i int) (err error) {
-	c.clients[i], err = Connect(c.Conf.Servers[i].Host, c.Conf.Servers[i].Port, common.ToDuration(c.Conf.Servers[i].Timeout))
+	c.clients[i], err = Connect(c.Conf.Servers[i].Host, c.Conf.Servers[i].Port, ctime.ToDuration(c.Conf.Servers[i].Timeout))
 	if err != nil {
 		return
 	}
@@ -77,7 +78,7 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	var ok bool
 	c.server_info = prometheus.NewDesc(head+"server_info", "nut server information", []string{"server", "Version", "ProtocolVersion"}, nil)
 	for _, client := range c.clients {
-		for _, ups := range common.Must(client.GetUPSList()) {
+		for _, ups := range args.Must(client.GetUPSList()) {
 			for _, v := range ups.Variables {
 				if _, ok = c.descs[v.Name]; ok {
 					continue

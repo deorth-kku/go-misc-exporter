@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"reflect"
 
-	"github.com/deorth-kku/go-common"
+	cerrors "github.com/deorth-kku/go-common/errors"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
 )
 
@@ -24,7 +24,7 @@ func Register[CONF any, COL cmd.Collector](name string, fn func(CONF) (COL, erro
 	}
 }
 
-const ErrNotRegisted = common.ErrorString("no such collector")
+const ErrNotRegisted = cerrors.String("no such collector")
 
 func NewCollector(name string, data json.RawMessage) (cmd.Collector, error) {
 	item, ok := regs[name]

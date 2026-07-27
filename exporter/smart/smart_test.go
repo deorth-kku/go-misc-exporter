@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/anatol/smart.go"
-	"github.com/deorth-kku/go-common"
+	args "github.com/deorth-kku/go-common/args"
 	"github.com/deorth-kku/go-misc-exporter/cmd"
 )
 
@@ -79,7 +79,7 @@ func TestParseSpinUpTime(t *testing.T) {
 
 func TestMatchSkip(t *testing.T) {
 	const link = "/tmp/testlink"
-	common.Must0(os.Symlink("/dev/null", link))
+	args.Must0(os.Symlink("/dev/null", link))
 	cfg := Conf{
 		Skip: []string{
 			link,
