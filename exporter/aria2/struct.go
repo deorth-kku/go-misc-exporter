@@ -8,6 +8,9 @@ import (
 
 func IterStructJson(strc any) iter.Seq2[string, any] {
 	v := reflect.ValueOf(strc)
+	if v.Kind() == reflect.Pointer {
+		v = v.Elem()
+	}
 	t := v.Type()
 	return func(yield func(string, any) bool) {
 		for i := range v.NumField() {

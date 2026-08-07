@@ -1,15 +1,14 @@
 package aria2
 
 import (
-	"fmt"
+	"context"
 	"log/slog"
 	"slices"
 	"strings"
-	"time"
 
+	"github.com/deorth-kku/aria2rpc-go"
 	ctime "github.com/deorth-kku/go-common/time"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/siku2/arigo"
 )
 
 const (
@@ -28,39 +27,15 @@ type collector struct {
 }
 
 type server struct {
-	*arigo.Client
+	*aria2rpc.Client
 	ServerConf
 }
 
 func (s *server) connect() (err error) {
-	ctx, cancal := ctime.TimeoutContext(s.Timeout)
-	defer cancal()
 	if s.Client != nil {
 		s.Client.Close()
 	}
-	s.Client, err = arigo.DialContext(ctx, s.Rpc, s.Secret)
-	return err
-}
-
-const (
-	reconnect_times    = 3
-	reconnect_interval = 1 * time.Second
-)
-
-func (s *server) reconnect() error {
-	var err error
-	bak := s.Client
-	slog.Warn("try to reconnect to aria2 rpc", "rpc", s.Rpc)
-	for i := range reconnect_times {
-		err = s.connect()
-		if err != nil {
-			slog.Warn("failed to reconnect aria2 rpc", "rpc", s.Rpc, "retry", fmt.Sprintf("%d/%d", i+1, reconnect_times), "err", err)
-			time.Sleep(reconnect_interval)
-		} else {
-			return nil
-		}
-	}
-	s.Client = bak
+	s.Client, err = aria2rpc.New(context.Background(), s.Rpc, aria2rpc.WithSecret(s.Secret))
 	return err
 }
 
@@ -81,23 +56,17 @@ func NewCollector(conf Conf) (col *collector, err error) {
 		}
 		err = col.servers[i].connect()
 		if err != nil {
-			err = col.servers[i].reconnect()
-			if err != nil {
-				return
-			}
+			return
 		}
 	}
 	return
 }
 
-func (c *collector) Close() (err error) {
+func (c *collector) Close() error {
 	for _, conn := range c.servers {
-		e := conn.Close()
-		if e != nil {
-			err = e
-		}
+		conn.Close()
 	}
-	return
+	return nil
 }
 
 var (
@@ -106,7 +75,7 @@ var (
 )
 
 func (c *collector) Describe(ch chan<- *prometheus.Desc) {
-	for k, v := range IterStructJson(arigo.Stats{}) {
+	for k, v := range IterStructJson(aria2rpc.GlobalStat{}) {
 		if _, ok := v.(uint); !ok {
 			continue
 		}
@@ -115,7 +84,7 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	}
 	task_info_labels := make([]string, 0)
 	task_labels := append(server_label, label_fields...)
-	for k, v := range IterStructJson(arigo.Status{}) {
+	for k, v := range IterStructJson(aria2rpc.Status{}) {
 		if slices.Contains(label_fields, k) {
 			continue
 		}
@@ -133,52 +102,56 @@ func (c *collector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.global_info_desc
 }
 
+func (c *collector) doServer(ch chan<- prometheus.Metric, server *server) {
+	ctx, cancel := ctime.TimeoutContext(server.Timeout)
+	defer cancel()
+	gloabl_stat, err := server.GetGlobalStat(ctx)
+	if err != nil {
+		slog.Error("failed to get aria2 global stats", "server", server.Rpc, "err", err)
+		return
+	} else {
+		for k, v := range IterStructJson(gloabl_stat) {
+			vv, ok := v.(uint)
+			if !ok {
+				continue
+			}
+			ch <- prometheus.MustNewConstMetric(c.global_desc[k], prometheus.GaugeValue, float64(vv), server.Rpc)
+		}
+	}
+	version, err := server.GetVersion(ctx)
+	if err != nil {
+		slog.Error("failed to get aria2 global info", "server", server.Rpc, "err", err)
+	} else {
+		ch <- prometheus.MustNewConstMetric(c.global_info_desc, prometheus.GaugeValue, 0, server.Rpc, version.Version, strings.Join(version.EnabledFeatures, ","))
+	}
+
+	tasks, err := server.TellActive(ctx)
+	if err != nil {
+		slog.Error("failed to get aria2 tasks status", "server", server.Rpc, "err", err)
+		return
+	}
+
+	for _, task := range tasks {
+		labels := append([]string{server.Rpc}, TaskLabels(*task)...)
+		info_labels := slices.Clone(labels)
+		for k, v := range IterStructJson(task) {
+			if slices.Contains(label_fields, k) {
+				continue
+			}
+			switch vv := v.(type) {
+			case uint:
+				ch <- prometheus.MustNewConstMetric(c.task_desc[k], prometheus.GaugeValue, float64(vv), labels...)
+			case string:
+				info_labels = append(info_labels, vv)
+			}
+		}
+		ch <- prometheus.MustNewConstMetric(c.task_info_desc, prometheus.GaugeValue, 0, info_labels...)
+	}
+}
+
 func (c *collector) Collect(ch chan<- prometheus.Metric) {
 	for _, server := range c.servers {
-		gloabl_stat, err := server.GetGlobalStats()
-		if err != nil {
-			slog.Error("failed to get aria2 global stats", "server", server.Rpc, "err", err)
-			server.reconnect()
-		} else {
-			for k, v := range IterStructJson(gloabl_stat) {
-				vv, ok := v.(uint)
-				if !ok {
-					continue
-				}
-				ch <- prometheus.MustNewConstMetric(c.global_desc[k], prometheus.GaugeValue, float64(vv), server.Rpc)
-			}
-		}
-		version, err := server.GetVersion()
-		if err != nil {
-			slog.Error("failed to get aria2 global info", "server", server.Rpc, "err", err)
-			server.reconnect()
-		} else {
-			ch <- prometheus.MustNewConstMetric(c.global_info_desc, prometheus.GaugeValue, 0, server.Rpc, version.Version, strings.Join(version.EnabledFeatures, ","))
-		}
-
-		tasks, err := server.TellActive([]string{}...)
-		if err != nil {
-			slog.Error("failed to get aria2 tasks status", "server", server.Rpc, "err", err)
-			server.reconnect()
-			return
-		}
-
-		for _, task := range tasks {
-			labels := append([]string{server.Rpc}, TaskLabels(task)...)
-			info_labels := slices.Clone(labels)
-			for k, v := range IterStructJson(task) {
-				if slices.Contains(label_fields, k) {
-					continue
-				}
-				switch vv := v.(type) {
-				case uint:
-					ch <- prometheus.MustNewConstMetric(c.task_desc[k], prometheus.GaugeValue, float64(vv), labels...)
-				case string:
-					info_labels = append(info_labels, vv)
-				}
-			}
-			ch <- prometheus.MustNewConstMetric(c.task_info_desc, prometheus.GaugeValue, 0, info_labels...)
-		}
+		c.doServer(ch, server)
 	}
 }
 
