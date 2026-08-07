@@ -1,6 +1,7 @@
 package aria2
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -20,7 +21,7 @@ const (
 	wsrpc   = "ws://localhost:" + rpcport + "/jsonrpc"
 )
 
-func startAria2() {
+func startAria2(t *testing.T) {
 	cmd := exec.Command("aria2c",
 		"--enable-rpc",
 		"--rpc-secret="+secret,
@@ -32,10 +33,13 @@ func startAria2() {
 	cmd.Stdout = os.Stdout
 	cmd.Start()
 	time.Sleep(time.Second / 2)
+	context.AfterFunc(t.Context(), func() {
+		cmd.Process.Kill()
+	})
 }
 
 func TestAria2(t *testing.T) {
-	startAria2()
+	startAria2(t)
 	ctx := t.Context()
 	cli, err := aria2rpc.New(ctx, wsrpc, aria2rpc.WithSecret(secret))
 	if err != nil {
@@ -63,7 +67,7 @@ func TestIterStruct(t *testing.T) {
 }
 
 func TestCollector(t *testing.T) {
-	startAria2()
+	startAria2(t)
 	ctx := t.Context()
 	col, err := NewCollector(Conf{
 		Servers: []ServerConf{{
@@ -88,7 +92,7 @@ func TestCollector(t *testing.T) {
 		return
 	}
 	time.Sleep(10 * time.Second)
-	startAria2()
+	startAria2(t)
 	time.Sleep(1 * time.Second)
 	err = cmd.TestCollectorThenClose(col)
 	if err != nil {
